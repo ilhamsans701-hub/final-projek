@@ -34,4 +34,32 @@ class Transaction_model {
         $this->db->bind('user_id', $userId);
         return $this->db->single();
     }
+
+    public function getCategories()
+    {
+        $this->db->query("SELECT * FROM categories ORDER BY type ASC, name ASC");
+        return $this->db->resultSet();
+    }
+
+    public function addTransaction($data)
+    {
+        $query = "INSERT INTO transactions 
+                    (user_id, category_id, type, description, amount, amount_origin, currency_code, exchange_rate, transaction_date) 
+                    VALUES 
+                    (:user_id, :category_id, :type, :description, :amount, :amount_origin, :currency_code, :exchange_rate, :transaction_date)";
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $data['user_id']);
+        $this->db->bind('category_id', $data['category_id']);
+        $this->db->bind('type', $data['type']);
+        $this->db->bind('description', $data['description']);
+        $this->db->bind('amount', $data['amount']); // Nilai IDR
+        $this->db->bind('amount_origin', $data['amount_origin']); // Nilai Asli
+        $this->db->bind('currency_code', $data['currency_code']);
+        $this->db->bind('exchange_rate', $data['exchange_rate']);
+        $this->db->bind('transaction_date', $data['transaction_date']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }

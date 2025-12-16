@@ -44,9 +44,9 @@
     <div class="card shadow-sm">
         <div class="card-header bg-white d-flex justify-content-between align-items-center">
             <h5 class="mb-0">Riwayat Transaksi Terakhir</h5>
-            <button class="btn btn-primary btn-sm">
+            <a href="<?= BASEURL; ?>/student/create" class="btn btn-primary btn-sm">
                 <i class="fas fa-plus"></i> Tambah Transaksi
-            </button>
+            </a>
         </div>
         <div class="card-body">
             <div class="table-responsive">
