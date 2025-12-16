@@ -1,11 +1,23 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-success mb-4">
     <div class="container">
-        <a class="navbar-brand" href="#">MyMoney (Student)</a>
-        <div class="d-flex">
-            <span class="navbar-text text-white me-3">
-                Halo, <?= $data['user']; ?>
-            </span>
-            <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        <a class="navbar-brand" href="<?= BASEURL; ?>/student">MyMoney (Student)</a>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link active" href="<?= BASEURL; ?>/student">Dashboard</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= BASEURL; ?>/subscription">Tagihan & Alert</a>
+                </li>
+            </ul>
+
+            <div class="d-flex">
+                <span class="navbar-text text-white me-3">
+                    Halo, <?= $data['user']; ?>
+                </span>
+                <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
         </div>
     </div>
 </nav>
