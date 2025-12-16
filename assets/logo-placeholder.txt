@@ -1,0 +1,11 @@
+Silakan tambahkan file logo.png di folder ini.
+Ukuran yang disarankan: 50x50 pixels atau lebih besar dengan aspect ratio 1:1 (persegi).
+
+Anda dapat membuat logo sederhana menggunakan:
+- Canva (canva.com)
+- Figma (figma.com)
+- Adobe Express (express.adobe.com)
+- Atau tools desain online lainnya
+
+File harus bernama: logo.png
+

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyMoney - Manajemen Keuangan Mahasiswa</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <img src="assets/logo.png" alt="MyMoney Logo" id="logo-img">
+                <h1>MyMoney</h1>
+            </div>
+            <p class="subtitle">Manajemen Keuangan untuk Mahasiswa</p>
+            <p id="user-role-info" class="user-role-info"></p>
+        </header>
+
+        <main>
+            <!-- Dashboard Section -->
+            <section class="dashboard-section">
+                <h2>Dashboard</h2>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>Saldo Tersedia</h3>
+                        <p class="amount" id="available-balance">Rp 0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Pengeluaran Bulan Ini</h3>
+                        <p class="amount expense" id="monthly-expense">Rp 0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Anggaran Bulanan</h3>
+                        <p class="amount budget" id="monthly-budget">Rp 0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Budget Tracker Section -->
+            <section class="budget-section">
+                <h2>Pengatur Anggaran</h2>
+                <div class="budget-form">
+                    <div class="form-group">
+                        <label for="budget-amount">Anggaran Bulanan:</label>
+                        <input type="number" id="budget-amount" placeholder="Masukkan jumlah (Rp)" min="0">
+                    </div>
+                    <button onclick="setBudget()" class="btn btn-primary">Set Anggaran</button>
+                </div>
+                
+                <div class="expense-form">
+                    <h3>Tambah Pengeluaran</h3>
+                    <div class="form-group">
+                        <label for="expense-description">Deskripsi:</label>
+                        <input type="text" id="expense-description" placeholder="Contoh: Makan siang">
+                    </div>
+                    <div class="form-group">
+                        <label for="expense-amount">Jumlah (Rp):</label>
+                        <input type="number" id="expense-amount" placeholder="Masukkan jumlah" min="0">
+                    </div>
+                    <button onclick="addExpense()" class="btn btn-secondary">Tambah Pengeluaran</button>
+                </div>
+
+                <div class="expense-list">
+                    <h3>Riwayat Pengeluaran</h3>
+                    <div id="expenses-container">
+                        <p class="empty-message">Belum ada pengeluaran</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Currency Converter Section -->
+            <section class="converter-section">
+                <h2>Kalkulator Kurs Mata Uang</h2>
+                <div class="converter-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="from-amount">Jumlah:</label>
+                            <input type="number" id="from-amount" placeholder="0" min="0" step="0.01">
+                        </div>
+                        <div class="form-group">
+                            <label for="from-currency">Dari:</label>
+                            <select id="from-currency">
+                                <option value="USD">USD - Dollar Amerika</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - Pound Inggris</option>
+                                <option value="JPY">JPY - Yen Jepang</option>
+                                <option value="IDR" selected>IDR - Rupiah Indonesia</option>
+                                <option value="SGD">SGD - Dollar Singapura</option>
+                                <option value="MYR">MYR - Ringgit Malaysia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="to-amount">Hasil:</label>
+                            <input type="number" id="to-amount" placeholder="0" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="to-currency">Ke:</label>
+                            <select id="to-currency">
+                                <option value="USD">USD - Dollar Amerika</option>
+                                <option value="EUR">EUR - Euro</option>
+                                <option value="GBP">GBP - Pound Inggris</option>
+                                <option value="JPY">JPY - Yen Jepang</option>
+                                <option value="IDR" selected>IDR - Rupiah Indonesia</option>
+                                <option value="SGD">SGD - Dollar Singapura</option>
+                                <option value="MYR">MYR - Ringgit Malaysia</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="converter-buttons">
+                        <button onclick="convertCurrency()" class="btn btn-primary" id="convert-btn">Konversi</button>
+                        <button onclick="swapCurrencies()" class="btn btn-secondary">Tukar</button>
+                        <button onclick="refreshExchangeRates()" class="btn btn-refresh" id="refresh-rates-btn" title="Update kurs online terbaru">🔄 Update Kurs Online</button>
+                    </div>
+                    <p id="exchange-rate-info" class="rate-info"></p>
+                    <p id="last-update-info" class="last-update-info"></p>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 MyMoney - Aplikasi Manajemen Keuangan Mahasiswa</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
