@@ -1,6 +1,5 @@
 <?php
-// define('BASEURL', 'http://localhost/mymoney/public');
-define('BASEURL', 'http://localhost/final-projek/public');
+define('BASEURL', 'http://localhost/mymoney/public');
 
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
