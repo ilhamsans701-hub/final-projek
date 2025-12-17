@@ -102,4 +102,53 @@ class Transaction_model {
         $this->db->bind('user_id', $userId);
         return $this->db->single();
     }
+
+    public function getTransactionById($id)
+    {
+        $this->db->query("SELECT * FROM " . $this->table . " WHERE id = :id");
+        $this->db->bind('id', $id);
+        return $this->db->single();
+    }
+
+    public function updateTransaction($data)
+    {
+        $query = "UPDATE transactions SET 
+                    category_id = :category_id,
+                    type = :type,
+                    description = :description,
+                    amount = :amount,
+                    amount_origin = :amount_origin,
+                    currency_code = :currency_code,
+                    exchange_rate = :exchange_rate,
+                    transaction_date = :transaction_date
+                  WHERE id = :id AND user_id = :user_id"; // Pastikan user_id dicek agar tidak edit punya orang lain
+
+        $this->db->query($query);
+        
+        $this->db->bind('category_id', $data['category_id']);
+        $this->db->bind('type', $data['type']);
+        $this->db->bind('description', $data['description']);
+        $this->db->bind('amount', $data['amount']);
+        $this->db->bind('amount_origin', $data['amount_origin']);
+        $this->db->bind('currency_code', $data['currency_code']);
+        $this->db->bind('exchange_rate', $data['exchange_rate']);
+        $this->db->bind('transaction_date', $data['transaction_date']);
+        $this->db->bind('id', $data['id']);
+        $this->db->bind('user_id', $data['user_id']);
+
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
+
+    public function deleteTransaction($id, $userId)
+    {
+        // Soft Delete (Flagging is_deleted = 1) agar data tidak hilang permanen (Audit Trail)
+        $query = "UPDATE " . $this->table . " SET is_deleted = 1 WHERE id = :id AND user_id = :user_id";
+        
+        $this->db->query($query);
+        $this->db->bind('id', $id);
+        $this->db->bind('user_id', $userId);
+        $this->db->execute();
+        return $this->db->rowCount();
+    }
 }

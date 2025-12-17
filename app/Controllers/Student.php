@@ -105,4 +105,84 @@ class Student extends Controller {
             exit;
         }
     }
+
+    public function delete($id)
+    {
+        // Cek login... (bisa dibuat private method biar DRY, tapi copy dulu gapapa)
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if ($this->model('Transaction_model')->deleteTransaction($id, $_SESSION['user_id']) > 0) {
+            Flasher::setFlash('berhasil', 'Transaksi berhasil dihapus', 'warning');
+        } else {
+            Flasher::setFlash('gagal', 'menghapus transaksi', 'danger');
+        }
+        header('Location: ' . BASEURL . '/student');
+        exit;
+    }
+
+    public function edit($id)
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        $data['judul'] = 'Edit Transaksi';
+        $data['user'] = $_SESSION['username'];
+        $data['categories'] = $this->model('Transaction_model')->getCategories();
+        
+        // Ambil data transaksi lama
+        $data['trx'] = $this->model('Transaction_model')->getTransactionById($id);
+
+        // Security: Cek apakah transaksi ini milik user yang login?
+        if(!$data['trx'] || $data['trx']['user_id'] != $_SESSION['user_id']) {
+            header('Location: ' . BASEURL . '/student');
+            exit;
+        }
+
+        $this->view('templates/header', $data);
+        $this->view('student/edit', $data); // Kita buat view ini sebentar lagi
+        $this->view('templates/footer');
+    }
+
+    public function update()
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+
+        // 1. Ambil Data
+        $userId = $_SESSION['user_id'];
+        $amountOrigin = str_replace('.', '', $_POST['amount']);
+        $currency = $_POST['currency'];
+        $rate = $_POST['exchange_rate_old']; // Default pakai rate lama
+
+        // 2. Cek apakah mata uang berubah? Jika ya, ambil kurs baru
+        // (Opsional: Bisa dipaksa update kurs, tapi disini kita pakai logika sederhana dulu)
+        if ($currency !== 'IDR') {
+             $rate = Currency::getRate($currency, 'IDR');
+             $amountIDR = $amountOrigin * $rate;
+        } else {
+             $rate = 1;
+             $amountIDR = $amountOrigin;
+        }
+
+        $data = [
+            'id' => $_POST['id'],
+            'user_id' => $userId,
+            'category_id' => $_POST['category_id'],
+            'type' => $_POST['type'],
+            'description' => $_POST['description'],
+            'amount' => $amountIDR,
+            'amount_origin' => $amountOrigin,
+            'currency_code' => $currency,
+            'exchange_rate' => $rate,
+            'transaction_date' => $_POST['date']
+        ];
+
+        if ($this->model('Transaction_model')->updateTransaction($data) > 0) {
+            Flasher::setFlash('berhasil', 'Transaksi berhasil diupdate', 'success');
+        } else {
+            // Jika rowCount 0 (tidak ada perubahan), tetap anggap sukses/info
+            Flasher::setFlash('info', 'Tidak ada data yang berubah', 'info');
+        }
+        
+        header('Location: ' . BASEURL . '/student');
+        exit;
+    }
 }
