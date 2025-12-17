@@ -849,7 +849,7 @@
             <!-- Footer -->
             <div class="p-3">
                 <div class="text-center">
-                    <small class="text-muted sidebar-text">v1.0 • Proyek Akhir</small>
+                    <small class="text-muted sidebar-text">MyMoney</small>
                 </div>
             </div>
         </div>

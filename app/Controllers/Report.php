@@ -17,7 +17,7 @@ class Report extends Controller {
         
         $this->view('templates/header_dashboard', $data);
         $this->view('report/index', $data);
-        $this->view('templates/footer');
+        $this->view('templates/footer_dashboard');
     }
 
     public function print()
