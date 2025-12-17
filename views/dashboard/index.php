@@ -1,11 +1,28 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
     <div class="container">
-        <a class="navbar-brand" href="#">Panel Orang Tua</a>
-        <div class="d-flex align-items-center">
-            <span class="navbar-text text-white me-3">
-                <i class="fas fa-user-tie"></i> <?= $data['user']; ?>
-            </span>
-            <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
+        <a class="navbar-brand" href="<?= BASEURL; ?>/dashboard">Panel Orang Tua</a>
+
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= BASEURL; ?>/dashboard">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= BASEURL; ?>/report">Cetak Laporan</a>
+                </li>
+            </ul>
+
+            <div class="d-flex align-items-center">
+                <span class="navbar-text text-white me-3">
+                    <i class="fas fa-user-tie"></i> <?= $data['user']; ?>
+                </span>
+                <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-outline-light btn-sm">Logout</a>
+            </div>
         </div>
     </div>
 </nav>

@@ -10,6 +10,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<?= BASEURL; ?>/subscription">Tagihan & Alert</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<?= BASEURL; ?>/report">Laporan</a>
+                </li>
             </ul>
 
             <div class="d-flex">

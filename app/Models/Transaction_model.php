@@ -151,4 +151,22 @@ class Transaction_model {
         $this->db->execute();
         return $this->db->rowCount();
     }
+
+    public function getTransactionsByMonth($userId, $month, $year)
+    {
+        $query = "SELECT t.*, c.name as category_name 
+                    FROM " . $this->table . " t 
+                    JOIN categories c ON t.category_id = c.id 
+                    WHERE t.user_id = :user_id 
+                    AND MONTH(t.transaction_date) = :month 
+                    AND YEAR(t.transaction_date) = :year 
+                    AND t.is_deleted = 0 
+                    ORDER BY t.transaction_date ASC";
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        $this->db->bind('month', $month);
+        $this->db->bind('year', $year);
+        return $this->db->resultSet();
+    }
 }
