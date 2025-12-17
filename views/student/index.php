@@ -23,6 +23,29 @@
 </nav>
 
 <div class="container">
+
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="alert alert-<?= $data['advice']['status']; ?> shadow-sm border-0 d-flex align-items-center"
+                role="alert">
+                <div class="me-3" style="font-size: 2rem;">
+                    <?php if($data['advice']['status'] == 'success') : ?>
+                    <i class="fas fa-smile-beam"></i>
+                    <?php elseif($data['advice']['status'] == 'warning') : ?>
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <?php elseif($data['advice']['status'] == 'dark') : ?>
+                    <i class="fas fa-dizzy"></i>
+                    <?php else : ?>
+                    <i class="fas fa-robot"></i>
+                    <?php endif; ?>
+                </div>
+                <div>
+                    <?= $data['advice']['message']; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mb-4">
         <div class="col-md-4">
             <div class="card text-white bg-primary mb-3 shadow">
@@ -48,6 +71,21 @@
                 <div class="card-header">Total Pengeluaran</div>
                 <div class="card-body">
                     <h3 class="card-title">Rp <?= number_format($data['summary']['total_expense'], 0, ',', '.'); ?></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-lg-12">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Statistik Keuangan Tahun Ini</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-area">
+                        <canvas id="myAreaChart" height="100"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,3 +146,67 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// Ambil data dari PHP yang dikirim lewat Controller
+const incomeData = <?= $data['chart_income']; ?>;
+const expenseData = <?= $data['chart_expense']; ?>;
+
+const ctx = document.getElementById('myAreaChart').getContext('2d');
+const myChart = new Chart(ctx, {
+    type: 'bar', // Bisa diganti 'line' kalau mau grafik garis
+    data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        datasets: [{
+                label: 'Pemasukan',
+                data: incomeData,
+                backgroundColor: 'rgba(25, 135, 84, 0.7)', // Warna Hijau (Success)
+                borderColor: 'rgba(25, 135, 84, 1)',
+                borderWidth: 1
+            },
+            {
+                label: 'Pengeluaran',
+                data: expenseData,
+                backgroundColor: 'rgba(220, 53, 69, 0.7)', // Warna Merah (Danger)
+                borderColor: 'rgba(220, 53, 69, 1)',
+                borderWidth: 1
+            }
+        ]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    // Format mata uang Rupiah di sumbu Y
+                    callback: function(value, index, values) {
+                        return 'Rp ' + value.toLocaleString('id-ID');
+                    }
+                }
+            }
+        },
+        plugins: {
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += new Intl.NumberFormat('id-ID', {
+                                style: 'currency',
+                                currency: 'IDR'
+                            }).format(context.parsed.y);
+                        }
+                        return label;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>

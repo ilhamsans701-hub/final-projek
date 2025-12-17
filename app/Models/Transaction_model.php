@@ -62,4 +62,44 @@ class Transaction_model {
         $this->db->execute();
         return $this->db->rowCount();
     }
+
+    public function getMonthlyStats($userId)
+    {
+        // Query Advance: Grouping data berdasarkan Bulan untuk tahun saat ini
+        // Mengembalikan array: Bulan, Tipe, Total
+        $query = "SELECT 
+                    MONTH(transaction_date) as month, 
+                    type, 
+                    SUM(amount) as total 
+                    FROM " . $this->table . " 
+                    WHERE user_id = :user_id 
+                    AND YEAR(transaction_date) = YEAR(CURDATE()) 
+                    AND is_deleted = 0
+                    GROUP BY MONTH(transaction_date), type
+                    ORDER BY month ASC";
+                
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        return $this->db->resultSet();
+    }
+
+    public function getTopExpenseCategory($userId)
+    {
+        // Query untuk mencari 1 kategori dengan total pengeluaran terbesar bulan ini
+        $query = "SELECT c.name, SUM(t.amount) as total 
+                    FROM " . $this->table . " t
+                    JOIN categories c ON t.category_id = c.id
+                    WHERE t.user_id = :user_id 
+                    AND t.type = 'expense'
+                    AND t.is_deleted = 0
+                    AND MONTH(t.transaction_date) = MONTH(CURDATE())
+                    AND YEAR(t.transaction_date) = YEAR(CURDATE())
+                    GROUP BY c.name 
+                    ORDER BY total DESC 
+                    LIMIT 1";
+                
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        return $this->db->single();
+    }
 }

@@ -1,9 +1,10 @@
 <?php
 
+require_once '../app/core/FinancialAdvisor.php';
+
 class Student extends Controller {
     public function index()
     {
-        // Cek Sesi: Harus Login dan Harus Anak
         if(session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'anak') {
             header('Location: ' . BASEURL . '/auth');
@@ -11,14 +12,32 @@ class Student extends Controller {
         }
 
         $userId = $_SESSION['user_id'];
-        
-        // Panggil Model
         $transModel = $this->model('Transaction_model');
         
         $data['judul'] = 'Dashboard Mahasiswa';
         $data['user'] = $_SESSION['username'];
         $data['summary'] = $transModel->getSummary($userId);
         $data['transactions'] = $transModel->getAllTransactions($userId);
+
+        $stats = $transModel->getMonthlyStats($userId);
+        $incomeData = array_fill(0, 12, 0);
+        $expenseData = array_fill(0, 12, 0);
+
+        foreach ($stats as $row) {
+            $index = $row['month'] - 1;
+            if ($row['type'] == 'income') {
+                $incomeData[$index] = (float) $row['total'];
+            } else {
+                $expenseData[$index] = (float) $row['total'];
+            }
+        }
+
+        $data['chart_income'] = json_encode($incomeData);
+        $data['chart_expense'] = json_encode($expenseData);
+        $totalIncome = $data['summary']['total_income'];
+        $totalExpense = $data['summary']['total_expense'];
+        $topCategory = $transModel->getTopExpenseCategory($userId);
+        $data['advice'] = FinancialAdvisor::analyze($totalIncome, $totalExpense, $topCategory);
 
         $this->view('templates/header', $data);
         $this->view('student/index', $data);
