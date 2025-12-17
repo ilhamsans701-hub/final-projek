@@ -38,6 +38,7 @@ class Student extends Controller {
         $totalExpense = $data['summary']['total_expense'];
         $topCategory = $transModel->getTopExpenseCategory($userId);
         $data['advice'] = FinancialAdvisor::analyze($totalIncome, $totalExpense, $topCategory);
+        $data['current_page'] = 'student';
 
         $this->view('templates/header_dashboard', $data);
         $this->view('student/index', $data);
@@ -60,6 +61,7 @@ class Student extends Controller {
         $data['categories'] = $transModel->getCategories();
         
         $data['monthly_stats'] = $transModel->getMonthlyStats($userId, date('m'), date('Y'));
+        $data['current_page'] = 'create';
 
         $this->view('templates/header_dashboard', $data);
         $this->view('student/create', $data);

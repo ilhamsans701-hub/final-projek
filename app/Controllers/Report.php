@@ -13,8 +13,9 @@ class Report extends Controller {
 
         $data['judul'] = 'Laporan Keuangan';
         $data['user'] = $_SESSION['username'];
+        $data['current_page'] = 'report';
         
-        $this->view('templates/header', $data);
+        $this->view('templates/header_dashboard', $data);
         $this->view('report/index', $data);
         $this->view('templates/footer');
     }

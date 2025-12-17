@@ -778,32 +778,42 @@
 
         <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link active" href="<?= BASEURL; ?>/student">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'student' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/student">
                     <i class="fas fa-home"></i>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= BASEURL; ?>/student/create">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'create' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/student/create">
                     <i class="fas fa-plus-circle"></i>
                     <span class="sidebar-text">Tambah Transaksi</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= BASEURL; ?>/subscription">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'subscription' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/subscription">
                     <i class="fas fa-bell"></i>
                     <span class="sidebar-text">Tagihan & Notifikasi</span>
-                    <span class="badge bg-danger ms-auto sidebar-text">3</span>
+
+                    <!-- Badge hanya muncul kalau ada data -->
+                    <?php if(isset($data['pending_count']) && $data['pending_count'] > 0): ?>
+                    <span class="badge bg-danger ms-auto sidebar-text">
+                        <?= $data['pending_count']; ?>
+                    </span>
+                    <?php endif; ?>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="<?= BASEURL; ?>/report">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'report' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/report">
                     <i class="fas fa-chart-bar"></i>
                     <span class="sidebar-text">Laporan & Grafik</span>
                 </a>
             </li>
             <li class="nav-item mt-4">
-                <a class="nav-link" href="#">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'settings' ? 'active' : ''; ?>" href="#">
                     <i class="fas fa-cog"></i>
                     <span class="sidebar-text">Pengaturan</span>
                 </a>

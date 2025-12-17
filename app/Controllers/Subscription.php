@@ -16,10 +16,14 @@ class Subscription extends Controller {
         
         // Ambil data yang sudah diproses logic tanggalnya
         $data['subscriptions'] = $this->model('Subscription_model')->getAllSubscriptions($_SESSION['user_id']);
+        $data['current_page'] = 'subscription';
 
-        $this->view('templates/header', $data);
+        $subscriptionModel = $this->model('Subscription_model');
+        $data['pending_count'] = $subscriptionModel->getPendingCount($_SESSION['user_id']);
+
+        $this->view('templates/header_dashboard', $data);
         $this->view('subscription/index', $data);
-        $this->view('templates/footer');
+        $this->view('templates/footer_dashboard');
     }
 
     public function store()

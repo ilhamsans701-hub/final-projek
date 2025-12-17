@@ -71,4 +71,17 @@ class Subscription_model {
         $this->db->execute();
         return $this->db->rowCount();
     }
+
+    public function getPendingCount($user_id)
+    {
+        $query = "SELECT COUNT(*) as count FROM subscriptions 
+                WHERE user_id = :user_id 
+                AND is_active = 1 
+                AND due_date <= DATE_ADD(CURDATE(), INTERVAL 3 DAY)
+                AND due_date >= CURDATE()"; // Hanya yang aktif dan jatuh tempo 3 hari ke depan
+        $this->db->query($query);
+        $this->db->bind('user_id', $user_id);
+        $result = $this->db->single();
+        return $result['count'];
+    }
 }
