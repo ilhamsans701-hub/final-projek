@@ -9,7 +9,7 @@ class FinancialAdvisor {
         if ($income <= 0) {
             return [
                 'status' => 'danger',
-                'message' => '🚨 <strong>Darurat!</strong> Anda belum mencatat pemasukan sama sekali bulan ini. Segera catat sumber danamu!'
+                'message' => '<strong>Darurat!</strong> Anda belum mencatat pemasukan sama sekali bulan ini. Segera catat sumber danamu!'
             ];
         }
 
@@ -19,7 +19,7 @@ class FinancialAdvisor {
         if ($ratio > 100) {
             return [
                 'status' => 'dark',
-                'message' => '💀 <strong>BAHAYA!</strong> Pengeluaranmu melebihi pemasukan ('. number_format($ratio, 1) . '%). Kamu sedang defisit. Hentikan semua pengeluaran sekunder!'
+                'message' => '<strong>BAHAYA!</strong> Pengeluaranmu melebihi pemasukan ('. number_format($ratio, 1) . '%). Kamu sedang defisit. Hentikan semua pengeluaran sekunder!'
             ];
         }
 
@@ -28,7 +28,7 @@ class FinancialAdvisor {
             $catName = $topCategory ? $topCategory['name'] : 'Jajan';
             return [
                 'status' => 'warning',
-                'message' => '⚠️ <strong>Hati-hati!</strong> Kamu sudah menghabiskan 80% anggaran. Kategori terborosmu adalah <u>' . $catName . '</u>. Coba rem dulu minggu ini.'
+                'message' => '<strong>Hati-hati!</strong> Kamu sudah menghabiskan 80% anggaran. Kategori terborosmu adalah <u>' . $catName . '</u>. Coba rem dulu minggu ini.'
             ];
         }
 
@@ -41,19 +41,19 @@ class FinancialAdvisor {
             if (strpos($catName, 'makan') !== false) {
                 return [
                     'status' => 'info',
-                    'message' => '💡 Keuanganmu aman. Tapi pengeluaran terbesarmu di <strong>Makanan</strong>. Coba bawa bekal atau masak sendiri untuk menabung lebih banyak.'
+                    'message' => 'Keuanganmu aman. Tapi pengeluaran terbesarmu di <strong>Makanan</strong>. Coba bawa bekal atau masak sendiri untuk menabung lebih banyak.'
                 ];
             }
             if (strpos($catName, 'game') !== false || strpos($catName, 'hiburan') !== false) {
                 return [
                     'status' => 'info',
-                    'message' => '💡 Keuangan stabil. Cuma ingat, top-up <strong>Game</strong> jangan keseringan ya. Tabung buat beli laptop baru!'
+                    'message' => 'Keuangan stabil. Cuma ingat, top-up <strong>Game</strong> jangan keseringan ya. Tabung buat beli laptop baru!'
                 ];
             }
             if (strpos($catName, 'transport') !== false) {
                 return [
                     'status' => 'info',
-                    'message' => '💡 Transportasi jadi pengeluaran utamamu. Sudah coba cari tebengan atau jalan kaki jika dekat?'
+                    'message' => 'Transportasi jadi pengeluaran utamamu. Sudah coba cari tebengan atau jalan kaki jika dekat?'
                 ];
             }
         }
@@ -61,7 +61,7 @@ class FinancialAdvisor {
         // Skenario 4: Sempurna
         return [
             'status' => 'success',
-            'message' => '✅ <strong>Luar Biasa!</strong> Manajemen keuanganmu sangat sehat. Teruskan kebiasaan baik ini, Sultan masa depan!'
+            'message' => '<strong>Luar Biasa!</strong> Manajemen keuanganmu sangat sehat. Teruskan kebiasaan baik ini, Sultan masa depan!'
         ];
     }
 }

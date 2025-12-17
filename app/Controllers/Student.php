@@ -39,27 +39,31 @@ class Student extends Controller {
         $topCategory = $transModel->getTopExpenseCategory($userId);
         $data['advice'] = FinancialAdvisor::analyze($totalIncome, $totalExpense, $topCategory);
 
-        $this->view('templates/header', $data);
+        $this->view('templates/header_dashboard', $data);
         $this->view('student/index', $data);
-        $this->view('templates/footer');
+        $this->view('templates/footer_dashboard'); 
     }
 
     public function create()
     {
-        // Cek Sesi (Security Check)
         if(session_status() === PHP_SESSION_NONE) session_start();
         if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'anak') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
 
+        $userId = $_SESSION['user_id'];
+        $transModel = $this->model('Transaction_model');
+        
         $data['judul'] = 'Tambah Transaksi';
         $data['user'] = $_SESSION['username'];
-        $data['categories'] = $this->model('Transaction_model')->getCategories();
+        $data['categories'] = $transModel->getCategories();
+        
+        $data['monthly_stats'] = $transModel->getMonthlyStats($userId, date('m'), date('Y'));
 
-        $this->view('templates/header', $data);
-        $this->view('student/create', $data); // Kita buat view ini nanti
-        $this->view('templates/footer');
+        $this->view('templates/header_dashboard', $data);
+        $this->view('student/create', $data);
+        $this->view('templates/footer_dashboard'); 
     }
 
     public function store()
@@ -137,9 +141,9 @@ class Student extends Controller {
             exit;
         }
 
-        $this->view('templates/header', $data);
+        $this->view('templates/header_dashboard', $data);
         $this->view('student/edit', $data); // Kita buat view ini sebentar lagi
-        $this->view('templates/footer');
+        $this->view('templates/footer_dashboard');
     }
 
     public function update()

@@ -19,8 +19,6 @@ class Home extends Controller {
         // 2. JIKA TAMU
         $data['judul'] = 'MyMoney - Kelola Keuangan Keluarga';
         
-        $this->view('templates/header_landing', $data); 
         $this->view('home/index', $data);               
-        $this->view('templates/footer_landing');        
     }
 }
