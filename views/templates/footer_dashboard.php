@@ -1,13 +1,78 @@
- </div> <!-- Penutup container-fluid -->
- </div>
+        </div> <!-- Penutup container-fluid -->
+        </div> <!-- Penutup main-content -->
 
- <!-- JavaScript Libraries -->
- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
- <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
- <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Konfirmasi Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-4">
+                            <i class="fas fa-door-open fa-3x text-warning mb-3"></i>
+                            <h5 class="fw-bold">Keluar dari Akun?</h5>
+                            <p class="text-muted mb-0">
+                                Anda akan keluar dari sistem MyMoney.<br>
+                                Pastikan semua data telah disimpan.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </button>
+                        <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-danger px-4" id="confirmLogoutBtn"
+                            style="background-color: #ef4444 !important; border-color: #ef4444 !important;">
+                            <i class="fas fa-sign-out-alt me-2"></i>Ya, Keluar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
 
- <script>
+        <!-- CSS untuk Logout Modal -->
+        <style>
+/* Logout Modal Styling */
+#logoutModal .modal-content {
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-xl);
+}
+
+#logoutModal .modal-header {
+    background: rgba(239, 68, 68, 0.05);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px 16px 0 0;
+}
+
+#logoutModal .modal-footer {
+    background: var(--bg-tertiary);
+    border-radius: 0 0 16px 16px;
+}
+
+/* Logout link styling */
+.logout-link {
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.logout-link:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    transform: translateX(5px);
+}
+        </style>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+        <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+
+        <script>
 // Mobile sidebar toggle functionality
 document.addEventListener('DOMContentLoaded', function() {
     const sidebar = document.getElementById('sidebar');
@@ -36,6 +101,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Setup logout confirmation
+    setupLogoutConfirmation();
 
     // Handle window resize
     window.addEventListener('resize', function() {
@@ -73,6 +141,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return new bootstrap.Popover(popoverTriggerEl);
     });
 });
+
+// Setup logout confirmation
+function setupLogoutConfirmation() {
+    // Tambah class logout-link ke semua link logout
+    document.querySelectorAll('a[href*="/auth/logout"]').forEach(link => {
+        link.classList.add('logout-link');
+
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Tampilkan modal konfirmasi
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+
+            // Setup confirm button
+            document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+                $btn.prop('disabled', true);
+
+                // Redirect setelah 1 detik untuk efek loading
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 1000);
+            });
+        });
+    });
+}
 
 // Global helper functions
 function confirmAction(message) {
@@ -168,7 +265,7 @@ if (window.innerWidth <= 768) {
         }
     }, true);
 }
- </script>
- </body>
+        </script>
+        </body>
 
- </html>
+        </html>

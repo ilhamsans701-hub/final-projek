@@ -10,16 +10,6 @@
 
             <div class="auth-card animate__animated animate__fadeIn">
                 <div class="auth-header">
-                    <!-- Mobile Logo -->
-                    <div class="d-flex align-items-center justify-content-center mb-3">
-                        <div class="auth-icon-sm d-md-none">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <div class="auth-icon d-none d-md-flex">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                    </div>
-
                     <h2 class="fw-bold mb-2 fs-4 fs-md-3">Daftar Akun MyMoney</h2>
                     <p class="opacity-75 mb-0 fs-6 fs-md-base">Bergabung dengan komunitas mahasiswa pengguna MyMoney</p>
                 </div>

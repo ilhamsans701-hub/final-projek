@@ -34,7 +34,7 @@ class Auth extends Controller {
                 $_SESSION['username'] = $user['username'];
                 $_SESSION['role'] = $user['role'];
                 $_SESSION['parent_id'] = $user['parent_id'];
-
+                $_SESSION['user_profile_photo'] = $user['photo'];
                 // Redirect berdasarkan Role
                 if ($user['role'] == 'orangtua') {
                     header('Location: ' . BASEURL . '/dashboard');

@@ -1,19 +1,11 @@
-<IfModule mod_rewrite.c>
-    RewriteEngine On
+Options -Indexes
 
-    # 1. Arahkan akses root (http://localhost/mymoney) langsung ke folder public
-    RewriteRule ^$ public/ [L]
-
-    # 2. Teruskan semua request lainnya ke dalam folder public juga
-    RewriteRule (.*) public/$1 [L]
-</IfModule>
-
-# 3. KEAMANAN: Blokir akses browser ke file sensitif (.env, .git, .gitignore)
-# Ini mencegah orang mencuri API Key atau password database Anda
-<FilesMatch "^\.(env|git|gitignore)">
+<FilesMatch "^\.(env|git|gitignore|composer|json|lock)">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Mencegah listing directory (tampilan "Index of /")
-Options -Indexes
+<Files xmlrpc.php>
+    Order Deny,Allow
+    Deny from all
+</Files>

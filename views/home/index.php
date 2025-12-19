@@ -263,9 +263,6 @@
                         <a href="<?= BASEURL; ?>/auth/register" class="btn btn-primary text-white fw-bold">
                             <i class="fas fa-rocket me-2"></i>Mulai Sekarang Gratis
                         </a>
-                        <a href="#fitur" class="btn btn-outline-light rounded-pill px-4">
-                            <i class="fas fa-play-circle me-2"></i>Lihat Demo Fitur
-                        </a>
                     </div>
                     <div class="row text-center">
                         <div class="col-4">
@@ -584,13 +581,6 @@
                             </div>
                         </div>
 
-                        <div class="mt-4 pt-3 border-top">
-                            <h6 class="fw-bold mb-3">Untuk Demonstrasi:</h6>
-                            <div class="alert alert-primary border-0">
-                                <small><i class="fas fa-info-circle me-2"></i>Gunakan akun demo:
-                                    <strong>Username:</strong> anak_budi | <strong>Password:</strong> password</small>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -610,9 +600,6 @@
                             <a href="<?= BASEURL; ?>/auth/register"
                                 class="btn btn-primary btn-lg text-white fw-bold px-5">
                                 <i class="fas fa-user-plus me-2"></i>Daftar Sekarang Gratis
-                            </a>
-                            <a href="<?= BASEURL; ?>/auth" class="btn btn-outline-light btn-lg px-5">
-                                <i class="fas fa-sign-in-alt me-2"></i>Masuk ke Akun
                             </a>
                         </div>
                         <small class="mt-3 d-block">

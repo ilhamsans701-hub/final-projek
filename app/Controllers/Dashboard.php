@@ -46,9 +46,9 @@ class Dashboard extends Controller {
             ];
         }
 
-        $this->view('templates/header', $data);
+        $this->view('templates/header_parent', $data);
         $this->view('dashboard/index', $data);
-        $this->view('templates/footer');
+        $this->view('templates/footer_parent');
     }
 
     // Helper function (Private) untuk ambil transaksi anak lewat Controller ini

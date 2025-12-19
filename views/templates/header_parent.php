@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $data['judul'] ?? 'Dashboard - MyMoney'; ?></title>
+    <title><?= $data['judul'] ?? 'Panel Orang Tua - MyMoney'; ?></title>
 
     <!-- Assets -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -12,12 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.datatables.net/1.13.4/css/dataTables.bootstrap5.min.css" rel="stylesheet">
-
-    <!-- Tambahkan di head atau sebelum script Anda -->
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
-    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
 
     <style>
     :root {
@@ -539,80 +533,20 @@
         }
     }
 
-    /* CSS baru untuk mobile dropdown profile */
+    /* CSS untuk mobile dropdown profile */
     @media (max-width: 992px) {
+        .sidebar-profile {
+            display: block;
+        }
 
-        /* Sembunyikan dropdown profile dari top-bar di mobile */
         .top-bar .dropdown {
             display: none;
         }
-
-        /* Tambah dropdown profile di sidebar */
-        .sidebar-profile {
-            padding: 1.5rem 1rem;
-            border-top: 1px solid var(--border-light);
-            margin-top: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .sidebar-profile-info {
-            flex: 1;
-        }
-
-        .sidebar-profile .dropdown-toggle {
-            background: none;
-            border: none;
-            padding: 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            width: 100%;
-            color: var(--text-primary);
-        }
-
-        .sidebar-profile .dropdown-toggle::after {
-            margin-left: auto;
-        }
-
-        .sidebar-profile .dropdown-menu {
-            position: absolute !important;
-            transform: translateX(-100px) !important;
-            margin-top: 0.5rem;
-        }
     }
 
-    /* Desktop: sembunyikan sidebar profile */
     @media (min-width: 993px) {
         .sidebar-profile {
             display: none;
-        }
-    }
-
-    @media (max-width: 992px) {
-        .top-bar {
-            padding-left: 60px;
-            /* Beri ruang untuk hamburger button */
-        }
-
-        .top-bar>div:first-child {
-            margin-left: 0;
-        }
-
-        .sidebar-toggle {
-            top: 20px;
-            left: 20px;
-            z-index: 1051;
-        }
-
-        /* Pastikan judul tidak keluar dari layar */
-        .top-bar h4 {
-            font-size: 1.25rem;
-            max-width: calc(100% - 60px);
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
         }
     }
 
@@ -623,7 +557,6 @@
         border-bottom: 1px solid var(--border-light);
         margin: 1rem 0;
         display: none;
-        /* Default sembunyi */
     }
 
     .sidebar-profile-info {
@@ -664,24 +597,6 @@
         box-shadow: var(--shadow-lg);
         margin-top: 0.5rem;
         min-width: 200px;
-    }
-
-    /* Tampilkan di mobile, sembunyikan di desktop */
-    @media (max-width: 992px) {
-        .sidebar-profile {
-            display: block;
-        }
-
-        /* Sembunyikan dropdown profile dari top-bar di mobile */
-        .top-bar .dropdown {
-            display: none;
-        }
-    }
-
-    @media (min-width: 993px) {
-        .sidebar-profile {
-            display: none;
-        }
     }
 
     /* Perbaikan untuk top-bar di mobile */
@@ -753,7 +668,6 @@
         .sidebar-profile .dropdown-menu {
             position: absolute !important;
             right: 0 !important;
-            /* Muncul dari kanan */
             left: auto !important;
             top: 100% !important;
             margin-top: 5px;
@@ -777,57 +691,39 @@
     <!-- Sidebar Navigation -->
     <nav class="sidebar" id="sidebar">
         <div class="sidebar-logo">
-            <a href="<?= BASEURL; ?>/student" class="navbar-brand fw-bold" style="color: var(--text-primary);">
-                <i class="fas fa-wallet me-2"></i><span class="sidebar-text">MyMoney</span>
+            <a href="<?= BASEURL; ?>/parent" class="navbar-brand fw-bold" style="color: var(--text-primary);">
+                <i class="fas fa-user-tie me-2"></i><span class="sidebar-text">Panel Orang Tua</span>
             </a>
         </div>
 
         <ul class="nav flex-column px-2">
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'student' ? 'active' : ''; ?>"
-                    href="<?= BASEURL; ?>/student">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'dashboard' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/parent">
                     <i class="fas fa-home"></i>
                     <span class="sidebar-text">Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'create' ? 'active' : ''; ?>"
-                    href="<?= BASEURL; ?>/student/create">
-                    <i class="fas fa-plus-circle"></i>
-                    <span class="sidebar-text">Tambah Transaksi</span>
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'monitoring' ? 'active' : ''; ?>" href="#">
+                    <i class="fas fa-eye"></i>
+                    <span class="sidebar-text">Monitoring</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'subscription' ? 'active' : ''; ?>"
-                    href="<?= BASEURL; ?>/subscription">
-                    <i class="fas fa-bell"></i>
-                    <span class="sidebar-text">Tagihan & Notifikasi</span>
-
-                    <!-- Badge hanya muncul kalau ada data -->
-                    <?php if(isset($data['pending_count']) && $data['pending_count'] > 0): ?>
-                    <span class="badge bg-danger ms-auto sidebar-text">
-                        <?= $data['pending_count']; ?>
-                    </span>
-                    <?php endif; ?>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'report' ? 'active' : ''; ?>"
-                    href="<?= BASEURL; ?>/report">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'reports' ? 'active' : ''; ?>" href="#">
                     <i class="fas fa-chart-bar"></i>
-                    <span class="sidebar-text">Laporan & Grafik</span>
+                    <span class="sidebar-text">Laporan</span>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'profile' ? 'active' : ''; ?>"
-                    href="<?= BASEURL; ?>/profile">
-                    <i class="fas fa-user"></i>
-                    <span class="sidebar-text">Profil</span>
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'settings' ? 'active' : ''; ?>" href="#">
+                    <i class="fas fa-cog"></i>
+                    <span class="sidebar-text">Pengaturan</span>
                 </a>
             </li>
-            <!-- LOGOUT BUTTON YANG KONSISTEN -->
             <li class="nav-item mt-4">
-                <a class="nav-link text-danger logout-link" href="<?= BASEURL; ?>/auth/logout">
+                <a class="nav-link text-danger" href="<?= BASEURL; ?>/auth/logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="sidebar-text">Keluar</span>
                 </a>
@@ -835,11 +731,33 @@
         </ul>
 
         <div class="mt-auto">
+            <!-- Profile Section untuk Mobile -->
+            <div class="sidebar-profile">
+                <div class="dropdown">
+                    <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($data['user'] ?? 'Orang Tua'); ?>&background=6366f1&color=fff"
+                            alt="Avatar" class="avatar-sm">
+                        <div class="sidebar-profile-info">
+                            <div class="user-name"><?= $data['user'] ?? 'Orang Tua'; ?></div>
+                            <small class="text-muted">Orang Tua</small>
+                        </div>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li><a class="dropdown-item text-danger" href="<?= BASEURL; ?>/auth/logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>Keluar
+                            </a></li>
+                    </ul>
+                </div>
+            </div>
 
             <!-- Footer -->
             <div class="p-3">
                 <div class="text-center">
-                    <small class="text-muted sidebar-text">MyMoney</small>
+                    <small class="text-muted sidebar-text">MyMoney - Panel Orang Tua</small>
                 </div>
             </div>
         </div>
@@ -851,7 +769,7 @@
         <!-- Top Bar -->
         <div class="top-bar d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h4 class="fw-bold mb-0"><?= $data['judul'] ?? 'Dashboard'; ?></h4>
+                <h4 class="fw-bold mb-0"><?= $data['judul'] ?? 'Dashboard Orang Tua'; ?></h4>
                 <small class="text-muted">
                     <i class="fas fa-calendar-alt me-1"></i> <?= date('d F Y'); ?>
                 </small>
@@ -861,26 +779,11 @@
                 <div class="dropdown">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2 p-2"
                         type="button" data-bs-toggle="dropdown">
-
-                        <?php
-                            $headerUsername = $_SESSION['username'] ?? 'User';
-                            $headerPhoto = $_SESSION['user_profile_photo'] ?? ''; 
-                            $defaultAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($headerUsername) . '&background=6366f1&color=fff';
-                            
-                            if (!empty($headerPhoto)) {
-                                $headerPhotoUrl = BASEURL . '/img/profile/' . $headerPhoto;
-                            } else {
-                                $headerPhotoUrl = $defaultAvatar;
-                            }
-                        ?>
-
-                        <img src="<?= $headerPhotoUrl; ?>" alt="Avatar" class="avatar-sm" style="object-fit: cover;"
-                            onerror="this.onerror=null; this.src='<?= $defaultAvatar; ?>';">
-
-                        <span class="d-none d-md-inline user-name"><?= $headerUsername; ?></span>
+                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($data['user'] ?? 'Orang Tua'); ?>&background=6366f1&color=fff"
+                            alt="Avatar" class="avatar-sm">
+                        <span class="d-none d-md-inline user-name"><?= $data['user'] ?? 'Orang Tua'; ?></span>
                         <i class="fas fa-chevron-down ms-1 small"></i>
                     </button>
-
                     <ul class="dropdown-menu dropdown-menu-end mt-2">
                         <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
                         <li>

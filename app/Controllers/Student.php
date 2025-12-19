@@ -17,7 +17,9 @@ class Student extends Controller {
         $data['judul'] = 'Dashboard Mahasiswa';
         $data['user'] = $_SESSION['username'];
         $data['summary'] = $transModel->getSummary($userId);
-        $data['transactions'] = $transModel->getAllTransactions($userId);
+        
+        // **PERUBAHAN PENTING:** Ambil SEMUA transaksi untuk DataTables, bukan hanya 5
+        $data['transactions'] = $transModel->getRecentTransactions($userId); // Hapus parameter limit
 
         $stats = $transModel->getMonthlyStats($userId);
         $incomeData = array_fill(0, 12, 0);

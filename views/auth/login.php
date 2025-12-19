@@ -10,16 +10,6 @@
 
             <div class="auth-card animate__animated animate__fadeIn">
                 <div class="auth-header">
-                    <!-- Mobile Logo -->
-                    <div class="d-flex align-items-center justify-content-center mb-3">
-                        <div class="auth-icon-sm d-md-none">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </div>
-                        <div class="auth-icon d-none d-md-flex">
-                            <i class="fas fa-sign-in-alt"></i>
-                        </div>
-                    </div>
-
                     <h2 class="fw-bold mb-2 fs-4 fs-md-3">Masuk ke MyMoney</h2>
                     <p class="opacity-75 mb-0 fs-6 fs-md-base">Kelola keuangan kuliah dengan lebih mudah</p>
                 </div>
@@ -86,27 +76,6 @@
 
                 <!-- Demo Info with responsive design -->
                 <div class="auth-footer">
-                    <div class="demo-info p-3 rounded">
-                        <div class="d-flex align-items-center mb-2">
-                            <i class="fas fa-info-circle text-primary me-2"></i>
-                            <small class="fw-medium">Gunakan akun demo:</small>
-                        </div>
-                        <div class="row g-2">
-                            <div class="col-12 col-sm-6">
-                                <div class="demo-credential">
-                                    <small class="text-muted">Username:</small>
-                                    <code class="ms-1 fw-bold text-dark">anak_budi</code>
-                                </div>
-                            </div>
-                            <div class="col-12 col-sm-6">
-                                <div class="demo-credential">
-                                    <small class="text-muted">Password:</small>
-                                    <code class="ms-1 fw-bold text-dark">password</code>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Back to Home (Desktop) -->
                     <div class="d-none d-md-block mt-3">
                         <a href="<?= BASEURL; ?>/home" class="text-decoration-none fs-6">

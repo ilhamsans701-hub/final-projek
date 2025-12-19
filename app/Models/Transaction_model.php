@@ -169,4 +169,55 @@ class Transaction_model {
         $this->db->bind('year', $year);
         return $this->db->resultSet();
     }
+
+    public function getRecentTransactions($userId, $limit = null)
+    {
+        $query = "SELECT t.*, c.name as category_name, c.icon as category_icon 
+                FROM transactions t 
+                LEFT JOIN categories c ON t.category_id = c.id 
+                WHERE t.user_id = :user_id 
+                AND t.is_deleted = 0 
+                ORDER BY t.transaction_date DESC, t.created_at DESC";
+        
+        // Tambahkan LIMIT hanya jika parameter limit diberikan
+        if ($limit !== null) {
+            $query .= " LIMIT :limit";
+        }
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        
+        if ($limit !== null) {
+            $this->db->bind('limit', $limit, PDO::PARAM_INT);
+        }
+        
+        return $this->db->resultSet();
+    }
+
+    // Tambahkan method ini di Transaction_model.php
+    public function getTotalByType($userId, $type) {
+        $query = "SELECT COALESCE(SUM(amount), 0) as total 
+                FROM transactions 
+                WHERE user_id = :user_id AND type = :type";
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        $this->db->bind('type', $type);
+        $result = $this->db->single();
+        return $result['total'];
+    }
+
+    // Method untuk mendapatkan ringkasan total
+    public function getSummaryTotals($userId) {
+        $query = "SELECT 
+                    COALESCE(SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END), 0) as total_income,
+                    COALESCE(SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END), 0) as total_expense,
+                    COUNT(*) as total_transactions
+                FROM transactions 
+                WHERE user_id = :user_id";
+        
+        $this->db->query($query);
+        $this->db->bind('user_id', $userId);
+        return $this->db->single();
+    }
 }
