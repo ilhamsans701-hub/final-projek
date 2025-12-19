@@ -232,7 +232,7 @@
                                         <i class="fas fa-sync-alt me-1"></i>
                                         Update: <?= date('H:i'); ?>
                                     </small>
-                                    <a href="<?= BASEURL; ?>/parent/detail/<?= $child['info']['id'] ?? ''; ?>"
+                                    <a href="<?= BASEURL; ?>/dashboard/detail/<?= $child['info']['id'] ?? ''; ?>"
                                         class="btn btn-outline-primary btn-sm">
                                         <i class="fas fa-chart-line me-1"></i> Detail
                                     </a>
