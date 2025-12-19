@@ -5,28 +5,50 @@ class Profile extends Controller {
     public function index()
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['user_id'])) {
+        
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['anak', 'orangtua'])) {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
 
-        $data['judul'] = 'Profil Saya';
+        // Set judul berdasarkan role
+        $role = $_SESSION['role'];
+        $judulMap = [
+            'anak' => 'Profil Saya',
+            'orangtua' => 'Profil Orang Tua'
+        ];
+        
+        $data['judul'] = $judulMap[$role];
         $data['user'] = $_SESSION['username']; 
         $data['profile_user'] = $this->model('User_model')->getUserById($_SESSION['user_id']); 
         $data['current_page'] = 'profile';
+        $data['role'] = $role;
 
-        $this->view('templates/header_dashboard', $data);
-        $this->view('profile/index', $data);
-        $this->view('templates/footer_dashboard');
+        // Load view berdasarkan role
+        $viewFile = 'profile/' . $role . '/index';
+        
+        // Tentukan header & footer berdasarkan role
+        $headerTemplate = ($role == 'orangtua') ? 'templates/header_parent' : 'templates/header_dashboard';
+        $footerTemplate = ($role == 'orangtua') ? 'templates/footer_parent' : 'templates/footer_dashboard';
+        
+        $this->view($headerTemplate, $data);
+        $this->view($viewFile, $data);
+        $this->view($footerTemplate);
     }
 
     public function update()
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
 
+        // Cek session dan role
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['anak', 'orangtua'])) {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
+
         // 1. Ambil data standar
         $id = $_POST['id'];
-        $username = htmlspecialchars($_POST['username']); // Sanitasi input
+        $username = htmlspecialchars($_POST['username']);
         $email = htmlspecialchars($_POST['email']);
         $fotoLama = $_POST['fotoLama'];
 
@@ -35,33 +57,28 @@ class Profile extends Controller {
             $fotoBaru = $fotoLama;
         } else {
             $fotoBaru = $this->uploadFoto();
-            // FIX: Jika upload gagal, redirect kembali (jangan return false doang)
             if (!$fotoBaru) {
                 header('Location: ' . BASEURL . '/profile');
                 exit;
             }
         }
 
-        // 3. FIX: Logika Update Password
-        $password = null; // Default null (tidak ganti password)
+        // 3. Logika Update Password
+        $password = null;
         
-        // Cek jika user mengisi password baru
         if (!empty($_POST['new_password'])) {
-            // Validasi: Password baru harus sama dengan konfirmasi
             if ($_POST['new_password'] !== $_POST['confirm_password']) {
                 Flasher::setFlash('gagal', 'Konfirmasi password tidak cocok!', 'danger');
                 header('Location: ' . BASEURL . '/profile');
                 exit;
             }
             
-            // Validasi panjang password
             if (strlen($_POST['new_password']) < 6) {
                 Flasher::setFlash('gagal', 'Password minimal 6 karakter!', 'danger');
                 header('Location: ' . BASEURL . '/profile');
                 exit;
             }
 
-            // Hash password baru
             $password = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
         }
 
@@ -71,19 +88,19 @@ class Profile extends Controller {
             'username' => $username,
             'email' => $email,
             'photo' => $fotoBaru,
-            'password' => $password // Kirim password (bisa null)
+            'password' => $password
         ];
 
-        // 5. Kirim ke Model (Pastikan Model bisa handle password null)
+        // 5. Update ke Model
         if ($this->model('User_model')->updateProfile($data) > 0) {
             $_SESSION['username'] = $username; 
             $_SESSION['user_profile_photo'] = $fotoBaru;
             Flasher::setFlash('berhasil', 'Profil berhasil diupdate', 'success');
         } else {
-            // Jika tidak ada perubahan data, anggap info saja
             Flasher::setFlash('info', 'Tidak ada perubahan data', 'info');
         }
         
+        // Redirect berdasarkan role untuk tampilan yang benar
         header('Location: ' . BASEURL . '/profile');
         exit;
     }
@@ -101,7 +118,6 @@ class Profile extends Controller {
         $ekstensiGambar = strtolower(end($ekstensiGambar));
 
         if (!in_array($ekstensiGambar, $ekstensiGambarValid)) {
-            // FIX: Gunakan Flasher, jangan echo script alert di controller
             Flasher::setFlash('gagal', 'File bukan gambar valid (jpg/png)!', 'danger');
             return false;
         }
@@ -118,7 +134,6 @@ class Profile extends Controller {
         if(move_uploaded_file($tmpName, $tujuan)) {
             return $namaFileBaru;
         } else {
-            // Fallback jika path absolute gagal, coba relative (untuk XAMPP biasanya)
             move_uploaded_file($tmpName, 'img/profile/' . $namaFileBaru);
             return $namaFileBaru;
         }
@@ -128,13 +143,12 @@ class Profile extends Controller {
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
         
-        if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id']) || !in_array($_SESSION['role'], ['anak', 'orangtua'])) {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
 
         if ($this->model('User_model')->deleteUser($_SESSION['user_id']) > 0) {
-            // Logout user
             session_destroy();
             header('Location: ' . BASEURL . '/auth');
             exit;

@@ -400,6 +400,7 @@
         height: 36px;
         border-radius: 50%;
         border: 2px solid var(--primary);
+        object-fit: cover;
     }
 
     /* Avatar size fix */
@@ -408,6 +409,7 @@
         height: 32px !important;
         border-radius: 50%;
         border: 2px solid var(--primary);
+        object-fit: cover;
     }
 
     /* User dropdown button styling */
@@ -675,6 +677,17 @@
             transform: none !important;
         }
     }
+
+    /* Logout link styling */
+    .logout-link {
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .logout-link:hover {
+        background: rgba(239, 68, 68, 0.1) !important;
+        transform: translateX(5px);
+    }
     </style>
 </head>
 
@@ -711,19 +724,14 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'reports' ? 'active' : ''; ?>" href="#">
-                    <i class="fas fa-chart-bar"></i>
-                    <span class="sidebar-text">Laporan</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'settings' ? 'active' : ''; ?>" href="#">
-                    <i class="fas fa-cog"></i>
-                    <span class="sidebar-text">Pengaturan</span>
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'profile' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/profile">
+                    <i class="fas fa-user"></i>
+                    <span class="sidebar-text">Profil</span>
                 </a>
             </li>
             <li class="nav-item mt-4">
-                <a class="nav-link text-danger" href="<?= BASEURL; ?>/auth/logout">
+                <a class="nav-link text-danger logout-link" href="<?= BASEURL; ?>/auth/logout">
                     <i class="fas fa-sign-out-alt"></i>
                     <span class="sidebar-text">Keluar</span>
                 </a>
@@ -735,19 +743,31 @@
             <div class="sidebar-profile">
                 <div class="dropdown">
                     <button class="dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($data['user'] ?? 'Orang Tua'); ?>&background=6366f1&color=fff"
-                            alt="Avatar" class="avatar-sm">
+                        <?php
+                        $parentUsername = $data['user'] ?? 'Orang Tua';
+                        $parentPhoto = $_SESSION['user_profile_photo'] ?? '';
+                        $parentDefaultAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($parentUsername) . '&background=6366f1&color=fff';
+                        
+                        if (!empty($parentPhoto)) {
+                            $parentPhotoUrl = BASEURL . '/img/profile/' . $parentPhoto;
+                        } else {
+                            $parentPhotoUrl = $parentDefaultAvatar;
+                        }
+                        ?>
+                        <img src="<?= $parentPhotoUrl; ?>" alt="Avatar" class="avatar-sm"
+                            onerror="this.onerror=null; this.src='<?= $parentDefaultAvatar; ?>';">
                         <div class="sidebar-profile-info">
-                            <div class="user-name"><?= $data['user'] ?? 'Orang Tua'; ?></div>
+                            <div class="user-name"><?= $parentUsername; ?></div>
                             <small class="text-muted">Orang Tua</small>
                         </div>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                        <li><a class="dropdown-item" href="<?= BASEURL; ?>/profile"><i
+                                    class="fas fa-user me-2"></i>Profil</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item text-danger" href="<?= BASEURL; ?>/auth/logout">
+                        <li><a class="dropdown-item text-danger logout-link" href="<?= BASEURL; ?>/auth/logout">
                                 <i class="fas fa-sign-out-alt me-2"></i>Keluar
                             </a></li>
                     </ul>
@@ -779,17 +799,29 @@
                 <div class="dropdown">
                     <button class="btn btn-outline-light btn-sm dropdown-toggle d-flex align-items-center gap-2 p-2"
                         type="button" data-bs-toggle="dropdown">
-                        <img src="https://ui-avatars.com/api/?name=<?= urlencode($data['user'] ?? 'Orang Tua'); ?>&background=6366f1&color=fff"
-                            alt="Avatar" class="avatar-sm">
-                        <span class="d-none d-md-inline user-name"><?= $data['user'] ?? 'Orang Tua'; ?></span>
+                        <?php
+                        $headerUsername = $_SESSION['username'] ?? 'Orang Tua';
+                        $headerPhoto = $_SESSION['user_profile_photo'] ?? '';
+                        $defaultAvatar = 'https://ui-avatars.com/api/?name=' . urlencode($headerUsername) . '&background=6366f1&color=fff';
+                        
+                        if (!empty($headerPhoto)) {
+                            $headerPhotoUrl = BASEURL . '/img/profile/' . $headerPhoto;
+                        } else {
+                            $headerPhotoUrl = $defaultAvatar;
+                        }
+                        ?>
+                        <img src="<?= $headerPhotoUrl; ?>" alt="Avatar" class="avatar-sm"
+                            onerror="this.onerror=null; this.src='<?= $defaultAvatar; ?>';">
+                        <span class="d-none d-md-inline user-name"><?= $headerUsername; ?></span>
                         <i class="fas fa-chevron-down ms-1 small"></i>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end mt-2">
-                        <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profil</a></li>
+                        <li><a class="dropdown-item" href="<?= BASEURL; ?>/profile"><i
+                                    class="fas fa-user me-2"></i>Profil</a></li>
                         <li>
                             <hr class="dropdown-divider">
                         </li>
-                        <li><a class="dropdown-item text-danger" href="<?= BASEURL; ?>/auth/logout">
+                        <li><a class="dropdown-item text-danger logout-link" href="<?= BASEURL; ?>/auth/logout">
                                 <i class="fas fa-sign-out-alt me-2"></i>Keluar
                             </a></li>
                     </ul>

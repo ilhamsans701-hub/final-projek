@@ -1,30 +1,297 @@
         </div> <!-- Penutup container-fluid -->
         </div> <!-- Penutup main-content -->
 
-        <!-- Floating Action Button (opsional) -->
-        <button class="fab" id="fabButton">
-            <i class="fas fa-plus"></i>
+        <!-- Logout Confirmation Modal -->
+        <div class="modal fade" id="logoutModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header border-0">
+                        <h5 class="modal-title text-danger">
+                            <i class="fas fa-sign-out-alt me-2"></i>Konfirmasi Logout
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center py-4">
+                        <div class="mb-4">
+                            <i class="fas fa-door-open fa-3x text-warning mb-3"></i>
+                            <h5 class="fw-bold">Keluar dari Akun?</h5>
+                            <p class="text-muted mb-0">
+                                Anda akan keluar dari Panel Orang Tua MyMoney.<br>
+                                Pastikan semua data telah disimpan.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="modal-footer border-0 justify-content-center">
+                        <button type="button" class="btn btn-secondary px-4" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Batal
+                        </button>
+                        <a href="<?= BASEURL; ?>/auth/logout" class="btn btn-danger px-4" id="confirmLogoutBtn"
+                            style="background-color: #ef4444 !important; border-color: #ef4444 !important;">
+                            <i class="fas fa-sign-out-alt me-2"></i>Ya, Keluar
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Floating Action Button -->
+        <button class="fab" id="fabButton" onclick="location.reload()" title="Refresh Data">
+            <i class="fas fa-sync-alt"></i>
         </button>
+
+        <!-- CSS untuk Logout Modal -->
+        <style>
+/* Logout Modal Styling */
+#logoutModal .modal-content {
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-xl);
+}
+
+#logoutModal .modal-header {
+    background: rgba(239, 68, 68, 0.05);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px 16px 0 0;
+}
+
+#logoutModal .modal-footer {
+    background: var(--bg-tertiary);
+    border-radius: 0 0 16px 16px;
+}
+
+/* Logout link styling */
+.logout-link {
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.logout-link:hover {
+    background: rgba(239, 68, 68, 0.1) !important;
+    transform: translateX(5px);
+}
+        </style>
 
         <!-- JavaScript Libraries -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
         <script src="https://cdn.datatables.net/1.13.4/js/dataTables.bootstrap5.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
         <script>
-// Sidebar Toggle for Mobile
-document.getElementById('sidebarToggle').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.toggle('show');
-    document.getElementById('sidebarOverlay').classList.toggle('show');
+// Mobile sidebar toggle functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
+
+    // Toggle sidebar
+    function toggleSidebar() {
+        if (sidebar && sidebarOverlay) {
+            sidebar.classList.toggle('show');
+            sidebarOverlay.classList.toggle('show');
+            body.style.overflow = sidebar.classList.contains('show') ? 'hidden' : '';
+        }
+    }
+
+    // Event listeners
+    if (sidebarToggle) sidebarToggle.addEventListener('click', toggleSidebar);
+    if (sidebarOverlay) sidebarOverlay.addEventListener('click', toggleSidebar);
+
+    // Close sidebar when clicking on a link (mobile)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+            if (window.innerWidth <= 992) {
+                toggleSidebar();
+            }
+        });
+    });
+
+    // Setup logout confirmation
+    setupLogoutConfirmation();
+
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        if (window.innerWidth > 992) {
+            if (sidebar) sidebar.classList.remove('show');
+            if (sidebarOverlay) sidebarOverlay.classList.remove('show');
+            body.style.overflow = '';
+        }
+    });
+
+    // Initialize DataTables jika ada
+    const tables = document.querySelectorAll('table[data-datatables="true"]');
+    tables.forEach(table => {
+        if ($.fn.DataTable.isDataTable(table)) return;
+        $(table).DataTable({
+            responsive: true,
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json'
+            },
+            order: [
+                [0, 'desc']
+            ]
+        });
+    });
+
+    // Initialize tooltips
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    const tooltipList = tooltipTriggerList.map(function(tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl);
+    });
+
+    // Initialize popovers
+    const popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+    const popoverList = popoverTriggerList.map(function(popoverTriggerEl) {
+        return new bootstrap.Popover(popoverTriggerEl);
+    });
 });
 
-document.getElementById('sidebarOverlay').addEventListener('click', function() {
-    document.getElementById('sidebar').classList.remove('show');
-    this.classList.remove('show');
+// Setup logout confirmation
+function setupLogoutConfirmation() {
+    // Tambah class logout-link ke semua link logout
+    document.querySelectorAll('a[href*="/auth/logout"]').forEach(link => {
+        link.classList.add('logout-link');
+
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            // Tampilkan modal konfirmasi
+            const logoutModal = new bootstrap.Modal(document.getElementById('logoutModal'));
+            logoutModal.show();
+
+            // Setup confirm button
+            document.getElementById('confirmLogoutBtn').addEventListener('click', function() {
+                const $btn = $(this);
+                const originalText = $btn.html();
+                $btn.html('<i class="fas fa-spinner fa-spin me-2"></i>Memproses...');
+                $btn.prop('disabled', true);
+
+                // Redirect setelah 1 detik untuk efek loading
+                setTimeout(() => {
+                    window.location.href = link.href;
+                }, 1000);
+            });
+        });
+    });
+}
+
+// Global helper functions
+function confirmAction(message) {
+    return confirm(message || 'Anda yakin ingin melanjutkan?');
+}
+
+function showLoading(button) {
+    if (button) {
+        const originalText = button.innerHTML;
+        button.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Memproses...';
+        button.disabled = true;
+        return originalText;
+    }
+    return null;
+}
+
+function hideLoading(button, originalText) {
+    if (button && originalText) {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    }
+}
+
+// Form validation helpers
+function validateRequiredFields(form) {
+    let isValid = true;
+    const requiredFields = form.querySelectorAll('[required]');
+
+    requiredFields.forEach(field => {
+        if (!field.value.trim()) {
+            field.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            field.classList.remove('is-invalid');
+        }
+    });
+
+    return isValid;
+}
+
+// Flash messages auto-dismiss
+setTimeout(function() {
+    const alerts = document.querySelectorAll('.alert:not(.alert-permanent)');
+    alerts.forEach(alert => {
+        alert.style.transition = 'opacity 0.5s ease';
+        alert.style.opacity = '0';
+        setTimeout(() => {
+            if (alert.parentNode) {
+                alert.remove();
+            }
+        }, 500);
+    });
+}, 5000);
+
+// Chart.js global configuration
+if (typeof Chart !== 'undefined') {
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.color = '#64748b';
+    Chart.defaults.borderColor = 'rgba(0, 0, 0, 0.05)';
+}
+
+// Mobile-specific enhancements
+if (window.innerWidth <= 768) {
+    // Better touch handling for buttons
+    document.addEventListener('touchstart', function(e) {
+        if (e.target.closest('.btn') || e.target.closest('.nav-link')) {
+            e.target.style.transform = 'scale(0.98)';
+        }
+    }, {
+        passive: true
+    });
+
+    document.addEventListener('touchend', function(e) {
+        if (e.target.closest('.btn') || e.target.closest('.nav-link')) {
+            e.target.style.transform = '';
+        }
+    }, {
+        passive: true
+    });
+
+    // Prevent zoom on input focus for iOS
+    document.addEventListener('focus', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            document.body.style.zoom = "100%";
+        }
+    }, true);
+
+    document.addEventListener('blur', function(e) {
+        if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'SELECT') {
+            setTimeout(function() {
+                document.body.style.zoom = "";
+            }, 100);
+        }
+    }, true);
+}
+
+// FAB Button Action untuk Parent Dashboard
+document.getElementById('fabButton')?.addEventListener('click', function() {
+    // Aksi default untuk parent dashboard: refresh halaman
+    location.reload();
 });
 
-// Close sidebar when clicking a link on mobile
+// Handle window resize untuk parent
+window.addEventListener('resize', function() {
+    if (window.innerWidth >= 992) {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const body = document.body;
+
+        if (sidebar) sidebar.classList.remove('show');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('show');
+        body.style.overflow = '';
+    }
+});
+
+// Close sidebar when clicking a link on mobile untuk parent
 document.querySelectorAll('.sidebar .nav-link').forEach(link => {
     link.addEventListener('click', function() {
         if (window.innerWidth < 992) {
@@ -34,13 +301,7 @@ document.querySelectorAll('.sidebar .nav-link').forEach(link => {
     });
 });
 
-// FAB Button Action
-document.getElementById('fabButton')?.addEventListener('click', function() {
-    // Tambah aksi FAB di sini
-    // window.location.href = '<?= BASEURL; ?>/parent/create';
-});
-
-// Initialize DataTables if table exists
+// Initialize DataTables jika ada tabel dengan class datatable
 $(document).ready(function() {
     if ($('.datatable').length) {
         $('.datatable').DataTable({
@@ -48,16 +309,11 @@ $(document).ready(function() {
                 url: '//cdn.datatables.net/plug-ins/1.13.4/i18n/id.json'
             },
             pageLength: 10,
-            responsive: true
+            responsive: true,
+            order: [
+                [0, 'desc']
+            ]
         });
-    }
-});
-
-// Handle window resize
-window.addEventListener('resize', function() {
-    if (window.innerWidth >= 992) {
-        document.getElementById('sidebar').classList.remove('show');
-        document.getElementById('sidebarOverlay').classList.remove('show');
     }
 });
         </script>

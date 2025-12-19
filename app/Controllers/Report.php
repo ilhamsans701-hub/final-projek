@@ -6,7 +6,7 @@ class Report extends Controller {
     {
         // Halaman Filter (Pilih Bulan & Tahun)
         if(session_status() === PHP_SESSION_NONE) session_start();
-        if (!isset($_SESSION['user_id'])) {
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'anak') {
             header('Location: ' . BASEURL . '/auth');
             exit;
         }
