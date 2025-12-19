@@ -1,18 +1,114 @@
 <?php if(session_status() === PHP_SESSION_NONE) session_start(); ?>
 
-<div class="card shadow-sm border-0">
-    <div class="card-header bg-white py-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <h5 class="fw-bold mb-0">Kelola Tagihan Rutin</h5>
-            <a href="<?= BASEURL; ?>/student" class="btn btn-sm btn-outline-secondary">
-                <i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard
-            </a>
-        </div>
+<div class="table-container">
+    <div class="d-flex justify-content-between align-items-center p-3 border-bottom">
+        <h5 class="fw-bold mb-0">Kelola Tagihan Rutin</h5>
+        <a href="<?= BASEURL; ?>/student" class="btn btn-sm btn-outline-secondary">
+            <i class="fas fa-arrow-left me-1"></i> Kembali ke Dashboard
+        </a>
     </div>
 
-    <div class="card-body p-4">
-        <div class="row g-4">
-            <!-- Form Tambah -->
+    <div class="p-4">
+        <?php Flasher::flash(); ?>
+
+        <!-- Form Tambah Tagihan -->
+        <div class="row g-4 mb-4">
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm mb-4">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-list-alt me-2 text-primary"></i>Daftar Tagihan Aktif
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <?php if(empty($data['subscriptions'])) : ?>
+                        <div class="text-center py-5">
+                            <div class="mb-4">
+                                <i class="fas fa-smile fa-3x text-warning mb-3"></i>
+                                <h5 class="fw-bold">Tidak ada tagihan aktif</h5>
+                                <p class="text-muted mb-0">Hidup tenang! 😎</p>
+                            </div>
+                        </div>
+                        <?php else : ?>
+                        <div class="table-responsive">
+                            <table class="table align-middle table-hover" id="subscriptionsTable">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="fw-medium">Layanan</th>
+                                        <th class="fw-medium">Biaya</th>
+                                        <th class="fw-medium">Jatuh Tempo</th>
+                                        <th class="fw-medium">Status</th>
+                                        <th class="fw-medium">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach($data['subscriptions'] as $sub) : ?>
+                                    <tr>
+                                        <td>
+                                            <div class="fw-bold"><?= htmlspecialchars($sub['service_name']); ?></div>
+                                            <small class="text-muted">
+                                                <i class="fas fa-sync-alt me-1"></i>
+                                                <?= $sub['billing_cycle'] == 'monthly' ? 'Bulanan' : 'Tahunan'; ?>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold">Rp <?= number_format($sub['amount'], 0, ',', '.'); ?>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="fw-medium"><?= date('d M Y', strtotime($sub['due_date'])); ?>
+                                            </div>
+                                            <small class="text-muted">
+                                                <?php
+                                                $today = new DateTime();
+                                                $dueDate = new DateTime($sub['due_date']);
+                                                $interval = $today->diff($dueDate);
+                                                echo $interval->days . ' hari lagi';
+                                                ?>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <?php if($sub['status'] == 'overdue') : ?>
+                                            <span class="badge bg-dark rounded-pill px-3 py-2">
+                                                <i class="fas fa-exclamation-triangle me-1"></i>
+                                                Telat <?= $sub['days_left']; ?> hari
+                                            </span>
+                                            <?php elseif($sub['status'] == 'danger') : ?>
+                                            <span class="badge bg-danger rounded-pill px-3 py-2">
+                                                <i class="fas fa-bell me-1"></i>
+                                                H-<?= $sub['days_left']; ?> Bayar!
+                                            </span>
+                                            <?php elseif($sub['status'] == 'warning') : ?>
+                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
+                                                <i class="fas fa-exclamation me-1"></i>
+                                                H-<?= $sub['days_left']; ?>
+                                            </span>
+                                            <?php else : ?>
+                                            <span class="badge bg-success rounded-pill px-3 py-2">
+                                                <i class="fas fa-check me-1"></i>
+                                                Aman (<?= $sub['days_left']; ?> hari)
+                                            </span>
+                                            <?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <a href="<?= BASEURL; ?>/subscription/delete/<?= $sub['id']; ?>"
+                                                class="btn btn-outline-danger btn-sm px-3 delete-btn"
+                                                data-service="<?= htmlspecialchars($sub['service_name']); ?>"
+                                                data-amount="<?= number_format($sub['amount'], 0, ',', '.'); ?>">
+                                                <i class="fas fa-times me-1"></i> Stop
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Form Tambah Tagihan Baru -->
             <div class="col-lg-4">
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-white border-bottom py-3">
@@ -74,113 +170,12 @@
                                 <div class="invalid-feedback">
                                     Tanggal jatuh tempo harus diisi dan tidak boleh kurang dari hari ini.
                                 </div>
-                                <small class="text-muted mt-1 d-block">
-                                    <i class="fas fa-info-circle me-1"></i>
-                                    Sistem akan mengingatkan H-3 sebelum jatuh tempo.
-                                </small>
                             </div>
 
                             <button type="submit" class="btn btn-primary w-100" id="submitBtn">
                                 <i class="fas fa-save me-1"></i> Simpan Tagihan
                             </button>
                         </form>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Daftar Tagihan -->
-            <div class="col-lg-8">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h6 class="fw-bold mb-0">
-                            <i class="fas fa-list-alt me-2 text-primary"></i>Daftar Tagihan Aktif
-                        </h6>
-                    </div>
-                    <div class="card-body p-4">
-                        <?php Flasher::flash(); ?>
-
-                        <?php if(empty($data['subscriptions'])) : ?>
-                        <div class="text-center py-5">
-                            <div class="mb-4">
-                                <i class="fas fa-smile fa-3x text-warning mb-3"></i>
-                                <h5 class="fw-bold">Tidak ada tagihan aktif</h5>
-                                <p class="text-muted mb-0">Hidup tenang! 😎</p>
-                            </div>
-                        </div>
-                        <?php else : ?>
-                        <div class="table-responsive">
-                            <table class="table align-middle table-hover">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th class="fw-medium">Layanan</th>
-                                        <th class="fw-medium">Biaya</th>
-                                        <th class="fw-medium">Jatuh Tempo</th>
-                                        <th class="fw-medium">Status</th>
-                                        <th class="fw-medium">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach($data['subscriptions'] as $sub) : ?>
-                                    <tr>
-                                        <td>
-                                            <div class="fw-bold"><?= htmlspecialchars($sub['service_name']); ?></div>
-                                            <small class="text-muted">
-                                                <i class="fas fa-sync-alt me-1"></i>
-                                                <?= $sub['billing_cycle'] == 'monthly' ? 'Bulanan' : 'Tahunan'; ?>
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <div class="fw-bold">Rp <?= number_format($sub['amount'], 0, ',', '.'); ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="fw-medium"><?= date('d M Y', strtotime($sub['due_date'])); ?>
-                                            </div>
-                                            <small class="text-muted">
-                                                <?php
-                                                $today = new DateTime();
-                                                $dueDate = new DateTime($sub['due_date']);
-                                                $interval = $today->diff($dueDate);
-                                                echo $interval->days . ' hari lagi';
-                                                ?>
-                                            </small>
-                                        </td>
-                                        <td>
-                                            <?php if($sub['status'] == 'overdue') : ?>
-                                            <span class="badge bg-dark rounded-pill px-3 py-2">
-                                                <i class="fas fa-exclamation-triangle me-1"></i>
-                                                Telat <?= $sub['days_left']; ?> hari
-                                            </span>
-                                            <?php elseif($sub['status'] == 'danger') : ?>
-                                            <span class="badge bg-danger rounded-pill px-3 py-2 animate-blink">
-                                                <i class="fas fa-bell me-1"></i>
-                                                H-<?= $sub['days_left']; ?> Bayar!
-                                            </span>
-                                            <?php elseif($sub['status'] == 'warning') : ?>
-                                            <span class="badge bg-warning text-dark rounded-pill px-3 py-2">
-                                                <i class="fas fa-exclamation me-1"></i>
-                                                H-<?= $sub['days_left']; ?>
-                                            </span>
-                                            <?php else : ?>
-                                            <span class="badge bg-success rounded-pill px-3 py-2">
-                                                <i class="fas fa-check me-1"></i>
-                                                Aman (<?= $sub['days_left']; ?> hari)
-                                            </span>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td>
-                                            <a href="<?= BASEURL; ?>/subscription/delete/<?= $sub['id']; ?>"
-                                                class="btn btn-outline-danger btn-sm px-3"
-                                                onclick="return confirmDelete(this, event)">
-                                                <i class="fas fa-times me-1"></i> Stop
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        </div>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -203,8 +198,9 @@
                     <i class="fas fa-trash-alt fa-3x text-danger mb-3"></i>
                     <h5 class="fw-bold">Hentikan Tagihan?</h5>
                     <p class="text-muted mb-0">
-                        Tagihan akan dihentikan secara permanen.<br>
-                        Tidak ada pengingat lagi untuk layanan ini.
+                        Tagihan <strong id="serviceName"></strong><br>
+                        dengan biaya <strong id="serviceAmount"></strong><br>
+                        akan dihentikan secara permanen.
                     </p>
                 </div>
             </div>
@@ -220,17 +216,13 @@
     </div>
 </div>
 
+<!-- Floating Action Button -->
+<a href="#addSubscriptionForm" class="fab" title="Tambah Tagihan Baru"
+    onclick="document.getElementById('service_name').focus()">
+    <i class="fas fa-plus"></i>
+</a>
+
 <style>
-@keyframes blink {
-    50% {
-        opacity: 0.5;
-    }
-}
-
-.animate-blink {
-    animation: blink 1s linear infinite;
-}
-
 /* Inline validation styles */
 .is-valid {
     border-color: var(--success) !important;
@@ -258,28 +250,47 @@
     display: block;
 }
 
-.card {
-    border-radius: 16px;
-}
-
 .form-control:focus,
 .form-select:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
+/* Badge styles */
 .badge {
     font-size: 0.8rem;
+    white-space: nowrap;
+}
+
+/* Delete Modal Styling */
+#deleteModal .modal-content {
+    border-radius: 16px;
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-xl);
+}
+
+#deleteModal .modal-header {
+    background: rgba(239, 68, 68, 0.05);
+    border-bottom: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: 16px 16px 0 0;
+}
+
+#deleteModal .modal-footer {
+    background: var(--bg-tertiary);
+    border-radius: 0 0 16px 16px;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-    .card-body {
-        padding: 1.5rem !important;
+    .table-container {
+        padding: 1rem !important;
     }
 
-    .table-responsive {
-        font-size: 0.9rem;
+    .btn {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 
     .badge {
@@ -290,9 +301,115 @@
 </style>
 
 <script>
-// Enhanced form UX with inline validation
-document.addEventListener('DOMContentLoaded', function() {
+// DataTables Initialization
+$(document).ready(function() {
+    // Initialize DataTables jika ada data
+    if ($('#subscriptionsTable').length) {
+        const table = $('#subscriptionsTable').DataTable({
+            language: {
+                url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/id.json'
+            },
+            order: [
+                [2, 'asc']
+            ], // Sort by due date
+            pageLength: 10,
+            lengthMenu: [
+                [5, 10, 25, 50],
+                [5, 10, 25, 50]
+            ],
+            responsive: true,
+            autoWidth: false,
+            columnDefs: [{
+                    responsivePriority: 1,
+                    targets: 0
+                },
+                {
+                    responsivePriority: 2,
+                    targets: 3
+                },
+                {
+                    responsivePriority: 3,
+                    targets: 1
+                },
+                {
+                    responsivePriority: 4,
+                    targets: 2
+                },
+                {
+                    responsivePriority: 5,
+                    targets: 4
+                },
+                {
+                    orderable: false,
+                    targets: 4
+                }
+            ],
+            initComplete: function() {
+                // Setup delete button handlers
+                setupDeleteButtons();
+            }
+        });
+
+        // Reinitialize delete buttons after DataTables redraw
+        table.on('draw', function() {
+            setupDeleteButtons();
+        });
+
+        // Adjust table for mobile
+        if (window.innerWidth <= 768) {
+            table.responsive.recalc();
+        }
+
+        $(window).on('resize', function() {
+            if (window.innerWidth <= 768) {
+                table.responsive.recalc();
+            }
+        });
+    }
+
+    // Setup form validation
+    setupFormValidation();
+});
+
+// Setup delete buttons
+function setupDeleteButtons() {
+    $('.delete-btn').off('click').on('click', function(e) {
+        e.preventDefault();
+
+        const url = this.href;
+        const serviceName = $(this).data('service');
+        const serviceAmount = $(this).data('amount');
+
+        // Update modal content
+        $('#serviceName').text(serviceName);
+        $('#serviceAmount').text('Rp ' + serviceAmount);
+
+        // Show modal
+        const modal = new bootstrap.Modal($('#deleteModal')[0]);
+        modal.show();
+
+        // Setup confirm button
+        $('#confirmDeleteBtn').off('click').on('click', function() {
+            const originalText = $(this).html();
+            $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Menghapus...');
+            $(this).prop('disabled', true);
+
+            window.location.href = url;
+        });
+
+        // Reset confirm button when modal is hidden
+        $('#deleteModal').on('hidden.bs.modal', function() {
+            $('#confirmDeleteBtn').html('<i class="fas fa-trash me-2"></i>Ya, Hentikan');
+            $('#confirmDeleteBtn').prop('disabled', false);
+        });
+    });
+}
+
+// Setup form validation
+function setupFormValidation() {
     const form = document.getElementById('addSubscriptionForm');
+    if (!form) return;
+
     const amountInput = form.querySelector('input[name="amount"]');
     const submitBtn = document.getElementById('submitBtn');
 
@@ -338,14 +455,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = this.value.replace(/[.,]/g, '');
         this.value = value;
     });
-
-    // Mobile optimizations
-    if (window.innerWidth <= 768) {
-        document.querySelectorAll('input, select').forEach(el => {
-            el.style.minHeight = '44px';
-        });
-    }
-});
+}
 
 // Format amount function
 function formatAmount(inputElement) {
@@ -428,22 +538,6 @@ function validateForm() {
     return isValid;
 }
 
-// Confirm delete
-function confirmDelete(link, event) {
-    event.preventDefault();
-
-    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
-    modal.show();
-
-    // Handle confirm button
-    document.getElementById('confirmDeleteBtn').onclick = function() {
-        showLoading(this, 'Menghapus...');
-        window.location.href = link.href;
-    };
-
-    return false;
-}
-
 // Show loading state
 function showLoading(button, text = 'Memproses...') {
     const originalText = button.innerHTML;
@@ -458,9 +552,9 @@ function showLoading(button, text = 'Memproses...') {
     };
 }
 
-// Custom alert function
-function showCustomAlert(message, type = 'info', duration = 5000) {
-    // Remove existing custom alerts
+// Custom alert function (konsisten dengan halaman lain)
+function showCustomAlert(message, type = 'info') {
+    // Remove existing alerts
     document.querySelectorAll('.custom-alert').forEach(alert => alert.remove());
 
     const alertDiv = document.createElement('div');
@@ -488,17 +582,13 @@ function showCustomAlert(message, type = 'info', duration = 5000) {
 
     document.body.appendChild(alertDiv);
 
-    // Auto remove after duration
-    if (duration > 0) {
-        setTimeout(() => {
-            if (alertDiv.parentElement) {
-                alertDiv.remove();
-            }
-        }, duration);
-    }
+    setTimeout(() => {
+        if (alertDiv.parentElement) {
+            alertDiv.remove();
+        }
+    }, 5000);
 }
 
-// Helper functions for custom alert
 function getIconByType(type) {
     const icons = {
         'success': 'check-circle',
@@ -531,11 +621,6 @@ style.textContent = `
             transform: translateX(0);
             opacity: 1;
         }
-    }
-    
-    .custom-alert {
-        border-radius: 12px;
-        border: none;
     }
 `;
 document.head.appendChild(style);
