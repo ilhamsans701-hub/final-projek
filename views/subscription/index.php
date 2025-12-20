@@ -13,6 +13,80 @@
 
         <!-- Form Tambah Tagihan -->
         <div class="row g-4 mb-4">
+            <!-- FORM TAMBAH DI KIRI -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm">
+                    <div class="card-header bg-white border-bottom py-3">
+                        <h6 class="fw-bold mb-0">
+                            <i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Tagihan Baru
+                        </h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <form action="<?= BASEURL; ?>/subscription/store" method="POST" id="addSubscriptionForm"
+                            novalidate>
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">
+                                    <i class="fas fa-tag me-1"></i> Nama Layanan *
+                                </label>
+                                <input type="text" name="service_name" class="form-control"
+                                    placeholder="Contoh: Kosan, Netflix, SPP" required minlength="3" maxlength="50">
+                                <div class="invalid-feedback">
+                                    Nama layanan harus diisi (3-50 karakter).
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">
+                                    <i class="fas fa-money-bill-wave me-1"></i> Biaya (IDR) *
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text">Rp</span>
+                                    <input type="text" name="amount_display" class="form-control" placeholder="0"
+                                        required id="amountDisplay" data-type="currency">
+                                    <input type="hidden" name="amount" id="realAmount">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="formatAmountDisplay(document.getElementById('amountDisplay'))">
+                                        <i class="fas fa-calculator"></i>
+                                    </button>
+                                </div>
+                                <div class="invalid-feedback">
+                                    Biaya harus diisi dengan angka yang valid.
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label fw-medium">
+                                    <i class="fas fa-sync-alt me-1"></i> Siklus Pembayaran *
+                                </label>
+                                <select name="billing_cycle" class="form-select" required>
+                                    <option value="monthly" selected>Bulanan</option>
+                                    <option value="yearly">Tahunan</option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    Pilih siklus pembayaran.
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <label class="form-label fw-medium">
+                                    <i class="fas fa-calendar-day me-1"></i> Jatuh Tempo *
+                                </label>
+                                <input type="date" name="due_date" class="form-control" required
+                                    min="<?= date('Y-m-d'); ?>">
+                                <div class="invalid-feedback">
+                                    Tanggal jatuh tempo harus diisi dan tidak boleh kurang dari hari ini.
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                                <i class="fas fa-save me-1"></i> Simpan Tagihan
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- DAFTAR TAGIHAN DI KANAN -->
             <div class="col-lg-8">
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-white border-bottom py-3">
@@ -26,7 +100,7 @@
                             <div class="mb-4">
                                 <i class="fas fa-smile fa-3x text-warning mb-3"></i>
                                 <h5 class="fw-bold">Tidak ada tagihan aktif</h5>
-                                <p class="text-muted mb-0">Hidup tenang! 😎</p>
+                                <p class="text-muted mb-0">Hidup tenang!</p>
                             </div>
                         </div>
                         <?php else : ?>
@@ -104,78 +178,6 @@
                             </table>
                         </div>
                         <?php endif; ?>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Form Tambah Tagihan Baru -->
-            <div class="col-lg-4">
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-white border-bottom py-3">
-                        <h6 class="fw-bold mb-0">
-                            <i class="fas fa-plus-circle me-2 text-primary"></i>Tambah Tagihan Baru
-                        </h6>
-                    </div>
-                    <div class="card-body p-4">
-                        <form action="<?= BASEURL; ?>/subscription/store" method="POST" id="addSubscriptionForm"
-                            novalidate>
-                            <div class="mb-3">
-                                <label class="form-label fw-medium">
-                                    <i class="fas fa-tag me-1"></i> Nama Layanan *
-                                </label>
-                                <input type="text" name="service_name" class="form-control"
-                                    placeholder="Contoh: Kosan, Netflix, SPP" required minlength="3" maxlength="50">
-                                <div class="invalid-feedback">
-                                    Nama layanan harus diisi (3-50 karakter).
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-medium">
-                                    <i class="fas fa-money-bill-wave me-1"></i> Biaya (IDR) *
-                                </label>
-                                <div class="input-group">
-                                    <span class="input-group-text">Rp</span>
-                                    <input type="text" name="amount" class="form-control" placeholder="0" required
-                                        pattern="[0-9.,]+" data-type="currency">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        onclick="formatAmount(this)">
-                                        <i class="fas fa-calculator"></i>
-                                    </button>
-                                </div>
-                                <div class="invalid-feedback">
-                                    Biaya harus diisi dengan angka yang valid.
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label fw-medium">
-                                    <i class="fas fa-sync-alt me-1"></i> Siklus Pembayaran *
-                                </label>
-                                <select name="billing_cycle" class="form-select" required>
-                                    <option value="monthly" selected>Bulanan</option>
-                                    <option value="yearly">Tahunan</option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    Pilih siklus pembayaran.
-                                </div>
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="form-label fw-medium">
-                                    <i class="fas fa-calendar-day me-1"></i> Jatuh Tempo *
-                                </label>
-                                <input type="date" name="due_date" class="form-control" required
-                                    min="<?= date('Y-m-d'); ?>">
-                                <div class="invalid-feedback">
-                                    Tanggal jatuh tempo harus diisi dan tidak boleh kurang dari hari ini.
-                                </div>
-                            </div>
-
-                            <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                                <i class="fas fa-save me-1"></i> Simpan Tagihan
-                            </button>
-                        </form>
                     </div>
                 </div>
             </div>
@@ -302,6 +304,7 @@
 
 <script>
 // DataTables Initialization
+// DataTables Initialization
 $(document).ready(function() {
     // Initialize DataTables jika ada data
     if ($('#subscriptionsTable').length) {
@@ -369,6 +372,9 @@ $(document).ready(function() {
 
     // Setup form validation
     setupFormValidation();
+
+    // Setup amount input formatting
+    setupAmountFormatting();
 });
 
 // Setup delete buttons
@@ -405,75 +411,107 @@ function setupDeleteButtons() {
     });
 }
 
-// Setup form validation
-function setupFormValidation() {
-    const form = document.getElementById('addSubscriptionForm');
-    if (!form) return;
+// Setup amount input formatting
+function setupAmountFormatting() {
+    const amountDisplay = document.getElementById('amountDisplay');
+    const realAmount = document.getElementById('realAmount');
 
-    const amountInput = form.querySelector('input[name="amount"]');
-    const submitBtn = document.getElementById('submitBtn');
+    if (!amountDisplay || !realAmount) return;
 
-    // Format amount on blur
-    amountInput.addEventListener('blur', function() {
-        formatAmount(this);
-        validateField(this);
+    // Saat input fokus, tampilkan angka tanpa format
+    amountDisplay.addEventListener('focus', function() {
+        const rawValue = this.value.replace(/[^\d]/g, '');
+        this.value = rawValue;
+        this.classList.remove('is-valid', 'is-invalid');
     });
 
-    // Real-time validation on input
-    form.querySelectorAll('input, select').forEach(field => {
-        field.addEventListener('input', function() {
-            validateField(this);
-        });
-
-        field.addEventListener('blur', function() {
-            validateField(this);
-        });
+    // Saat input tidak fokus (blur), format tampilan
+    amountDisplay.addEventListener('blur', function() {
+        formatAmountDisplay(this);
     });
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    // Saat user mengetik, update real value
+    amountDisplay.addEventListener('input', function() {
+        const rawValue = this.value.replace(/[^\d]/g, '');
+        realAmount.value = rawValue;
 
-        if (validateForm()) {
-            showLoading(submitBtn, 'Menyimpan...');
-            this.submit();
-        } else {
-            showCustomAlert('Harap periksa kembali form Anda', 'warning');
-            // Scroll to first error
-            const firstError = form.querySelector('.is-invalid');
-            if (firstError) {
-                firstError.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        }
+        // Validasi sederhana sambil mengetik
+        validateAmountField(this, rawValue);
     });
 
-    // Auto-format number input
-    amountInput.addEventListener('focus', function() {
-        const value = this.value.replace(/[.,]/g, '');
-        this.value = value;
-    });
+    // Trigger format awal jika ada nilai
+    if (amountDisplay.value) {
+        formatAmountDisplay(amountDisplay);
+    }
 }
 
-// Format amount function
-function formatAmount(inputElement) {
-    const input = inputElement.tagName === 'INPUT' ? inputElement : inputElement.previousElementSibling;
-    const value = input.value.replace(/[.,]/g, '');
+// Format amount display
+function formatAmountDisplay(inputElement) {
+    const realInput = document.getElementById('realAmount');
+    let rawValue = inputElement.value.replace(/[^\d]/g, '');
 
-    if (value && !isNaN(value) && value > 0) {
-        input.value = parseFloat(value).toLocaleString('id-ID');
-        input.classList.add('is-valid');
-        input.classList.remove('is-invalid');
-    } else if (value && (isNaN(value) || value <= 0)) {
-        input.classList.add('is-invalid');
-        input.classList.remove('is-valid');
+    // Update real input
+    realInput.value = rawValue;
+
+    // Validasi
+    if (!rawValue || rawValue === '0' || rawValue === '') {
+        inputElement.classList.add('is-invalid');
+        inputElement.classList.remove('is-valid');
+        return;
+    }
+
+    // Konversi ke number
+    const numberValue = parseInt(rawValue);
+
+    if (!isNaN(numberValue) && numberValue > 0) {
+        // Format tampilan dengan titik sebagai pemisah ribuan
+        inputElement.value = numberValue.toLocaleString('id-ID');
+
+        // Update real input dengan nilai yang sudah diparse
+        realInput.value = numberValue;
+
+        inputElement.classList.add('is-valid');
+        inputElement.classList.remove('is-invalid');
+    } else {
+        inputElement.classList.add('is-invalid');
+        inputElement.classList.remove('is-valid');
+    }
+}
+
+// Validate amount field
+function validateAmountField(field, rawValue) {
+    if (!rawValue || rawValue === '0' || rawValue === '') {
+        field.classList.add('is-invalid');
+        field.classList.remove('is-valid');
+        return false;
+    }
+
+    const numberValue = parseInt(rawValue);
+
+    if (!isNaN(numberValue) && numberValue > 0) {
+        field.classList.add('is-valid');
+        field.classList.remove('is-invalid');
+        return true;
+    } else {
+        field.classList.add('is-invalid');
+        field.classList.remove('is-valid');
+        return false;
     }
 }
 
 // Validate individual field
 function validateField(field) {
+    // Skip amount display karena sudah dihandle khusus
+    if (field.id === 'amountDisplay') {
+        const rawValue = field.value.replace(/[^\d]/g, '');
+        return validateAmountField(field, rawValue);
+    }
+
+    // Skip real amount input
+    if (field.id === 'realAmount') {
+        return true;
+    }
+
     const value = field.value.trim();
     const isRequired = field.hasAttribute('required');
     const minLength = field.getAttribute('minlength');
@@ -501,17 +539,17 @@ function validateField(field) {
         return false;
     }
 
-    // Check pattern (for amount)
+    // Check pattern (if any)
     if (pattern && value) {
         const regex = new RegExp(pattern);
-        if (!regex.test(value.replace(/[.,]/g, ''))) {
+        if (!regex.test(value)) {
             field.classList.add('is-invalid');
             return false;
         }
     }
 
     // Check date min
-    if (field.type === 'date' && value < field.min) {
+    if (field.type === 'date' && value && value < field.min) {
         field.classList.add('is-invalid');
         return false;
     }
@@ -529,13 +567,98 @@ function validateForm() {
     const form = document.getElementById('addSubscriptionForm');
     let isValid = true;
 
+    // Validasi amount khusus
+    const amountDisplay = document.getElementById('amountDisplay');
+    const realAmount = document.getElementById('realAmount');
+
+    if (amountDisplay) {
+        const rawValue = amountDisplay.value.replace(/[^\d]/g, '');
+        const realValue = realAmount ? realAmount.value : rawValue;
+
+        if (!realValue || parseInt(realValue) <= 0) {
+            amountDisplay.classList.add('is-invalid');
+            isValid = false;
+        } else {
+            amountDisplay.classList.remove('is-invalid');
+        }
+    }
+
+    // Validasi field lainnya
     form.querySelectorAll('[required]').forEach(field => {
-        if (!validateField(field)) {
+        if (field.id !== 'realAmount' && !validateField(field)) {
             isValid = false;
         }
     });
 
     return isValid;
+}
+
+// Setup form validation
+function setupFormValidation() {
+    const form = document.getElementById('addSubscriptionForm');
+    if (!form) return;
+
+    const submitBtn = document.getElementById('submitBtn');
+
+    // Real-time validation untuk semua field kecuali realAmount
+    form.querySelectorAll('input, select').forEach(field => {
+        if (field.id !== 'realAmount') {
+            field.addEventListener('input', function() {
+                validateField(this);
+            });
+
+            field.addEventListener('blur', function() {
+                validateField(this);
+            });
+        }
+    });
+
+    // Form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Pastikan realAmount diisi dengan nilai yang benar
+        const amountDisplay = document.getElementById('amountDisplay');
+        const realAmount = document.getElementById('realAmount');
+
+        if (amountDisplay && realAmount) {
+            const rawValue = amountDisplay.value.replace(/[^\d]/g, '');
+            const numberValue = parseInt(rawValue);
+
+            if (!isNaN(numberValue) && numberValue > 0) {
+                realAmount.value = numberValue;
+            } else {
+                // Jika ada format yang salah, coba ambil dari value asli
+                const displayValue = amountDisplay.value.replace(/[^\d]/g, '');
+                if (displayValue) {
+                    realAmount.value = displayValue;
+                }
+            }
+        }
+
+        if (validateForm()) {
+            showLoading(submitBtn, 'Menyimpan...');
+
+            // Debug: lihat nilai yang akan dikirim
+            console.log('Nilai yang dikirim:');
+            console.log('Service Name:', form.querySelector('[name="service_name"]').value);
+            console.log('Amount (real):', realAmount.value);
+            console.log('Billing Cycle:', form.querySelector('[name="billing_cycle"]').value);
+            console.log('Due Date:', form.querySelector('[name="due_date"]').value);
+
+            this.submit();
+        } else {
+            showCustomAlert('Harap periksa kembali form Anda', 'warning');
+            // Scroll to first error
+            const firstError = form.querySelector('.is-invalid');
+            if (firstError) {
+                firstError.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+            }
+        }
+    });
 }
 
 // Show loading state
@@ -552,7 +675,7 @@ function showLoading(button, text = 'Memproses...') {
     };
 }
 
-// Custom alert function (konsisten dengan halaman lain)
+// Custom alert function
 function showCustomAlert(message, type = 'info') {
     // Remove existing alerts
     document.querySelectorAll('.custom-alert').forEach(alert => alert.remove());
@@ -610,18 +733,29 @@ function getTitleByType(type) {
 }
 
 // Add animation for custom alert
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
+if (!document.querySelector('#slideInRightAnimation')) {
+    const style = document.createElement('style');
+    style.id = 'slideInRightAnimation';
+    style.textContent = `
+        @keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+    `;
+    document.head.appendChild(style);
+}
+
+// Helper function untuk format button (jika ada)
+function formatAmountBtn(button) {
+    const input = button.previousElementSibling;
+    if (input && input.id === 'amountDisplay') {
+        formatAmountDisplay(input);
     }
-`;
-document.head.appendChild(style);
+}
 </script>

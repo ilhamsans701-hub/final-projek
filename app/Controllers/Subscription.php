@@ -30,10 +30,20 @@ class Subscription extends Controller {
     {
         if(session_status() === PHP_SESSION_NONE) session_start();
         
+        // Sanitize amount - HAPUS SEMUA KARAKTER NON-DIGIT
+        $amount = preg_replace('/[^0-9]/', '', $_POST['amount']);
+        
+        // Pastikan amount numeric dan lebih dari 0
+        if (!is_numeric($amount) || $amount <= 0) {
+            Flasher::setFlash('gagal', 'Biaya harus berupa angka positif', 'danger');
+            header('Location: ' . BASEURL . '/subscription');
+            exit;
+        }
+        
         $data = [
             'user_id' => $_SESSION['user_id'],
             'service_name' => $_POST['service_name'],
-            'amount' => $_POST['amount'],
+            'amount' => $amount, // Nilai sudah bersih (hanya angka)
             'billing_cycle' => $_POST['billing_cycle'],
             'due_date' => $_POST['due_date']
         ];

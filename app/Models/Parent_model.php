@@ -34,14 +34,13 @@ class Parent_model {
         return $this->db->single();
     }
 
-    // Mengambil ringkasan keuangan spesifik milik Anak
     public function getChildSummary($childId)
     {
         $this->db->query("SELECT 
-            SUM(CASE WHEN type = 'income' AND is_deleted = 0 THEN amount ELSE 0 END) as total_income,
-            SUM(CASE WHEN type = 'expense' AND is_deleted = 0 THEN amount ELSE 0 END) as total_expense,
-            COUNT(CASE WHEN type = 'income' AND is_deleted = 0 THEN 1 END) as income_count,
-            COUNT(CASE WHEN type = 'expense' AND is_deleted = 0 THEN 1 END) as expense_count
+            COALESCE(SUM(CASE WHEN type = 'income' AND is_deleted = 0 THEN amount ELSE 0 END), 0) as total_income,
+            COALESCE(SUM(CASE WHEN type = 'expense' AND is_deleted = 0 THEN amount ELSE 0 END), 0) as total_expense,
+            COALESCE(COUNT(CASE WHEN type = 'income' AND is_deleted = 0 THEN 1 END), 0) as income_count,
+            COALESCE(COUNT(CASE WHEN type = 'expense' AND is_deleted = 0 THEN 1 END), 0) as expense_count
             FROM transactions WHERE user_id = :child_id");
             
         $this->db->bind('child_id', $childId);

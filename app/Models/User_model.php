@@ -18,34 +18,62 @@ class User_model {
 
     public function registerUser($data)
     {
-        // Siapkan query dasar
-        $query = "INSERT INTO users (username, email, password, role, family_code, parent_id) 
-                  VALUES (:username, :email, :password, :role, :family_code, :parent_id)";
-        
-        $this->db->query($query);
-        $this->db->bind('username', $data['username']);
-        $this->db->bind('email', $data['email']);
-        $this->db->bind('password', password_hash($data['password'], PASSWORD_BCRYPT));
-        $this->db->bind('role', $data['role']);
-
-        // Logika Family Code
         if ($data['role'] == 'orangtua') {
-            // Jika orang tua, generate kode keluarga baru
+            // ORANGTUA: generate kode keluarga baru
+            $query = "INSERT INTO users (username, email, password, role, family_code) 
+                    VALUES (:username, :email, :password, :role, :family_code)";
+            
+            $this->db->query($query);
+            $this->db->bind('username', $data['username']);
+            $this->db->bind('email', $data['email']);
+            $this->db->bind('password', password_hash($data['password'], PASSWORD_BCRYPT));
+            $this->db->bind('role', $data['role']);
+            
             $newFamilyCode = $this->generateFamilyCode();
             $this->db->bind('family_code', $newFamilyCode);
-            $this->db->bind('parent_id', null);
+            
         } else {
-            // Jika anak, family_code kosong di kolomnya sendiri, tapi cari parent_id
+            // ANAK: ambil family_code dari orangtua, lalu masukkan ke db
             $parentId = $this->getParentIdByCode($data['input_family_code']);
             if (!$parentId) {
                 return false; 
             }
-            $this->db->bind('family_code', null); 
+            
+            // 1. Ambil family_code dari orangtua
+            $familyCode = $this->getFamilyCodeByParentId($parentId);
+            if (!$familyCode) {
+                return false;
+            }
+            
+            // 2. Insert anak dengan family_code yang sama
+            $query = "INSERT INTO users (username, email, password, role, family_code, parent_id) 
+                    VALUES (:username, :email, :password, :role, :family_code, :parent_id)";
+            
+            $this->db->query($query);
+            $this->db->bind('username', $data['username']);
+            $this->db->bind('email', $data['email']);
+            $this->db->bind('password', password_hash($data['password'], PASSWORD_BCRYPT));
+            $this->db->bind('role', $data['role']);
+            $this->db->bind('family_code', $familyCode); // ← INI YANG PENTING!
             $this->db->bind('parent_id', $parentId);
         }
 
-        $this->db->execute();
-        return $this->db->rowCount();
+        try {
+            $this->db->execute();
+            return true;
+        } catch (PDOException $e) {
+            error_log("Register error: " . $e->getMessage());
+            return false;
+        }
+    }
+
+    // Helper: Ambil family_code dari parent_id
+    private function getFamilyCodeByParentId($parentId)
+    {
+        $this->db->query("SELECT family_code FROM users WHERE id = :parent_id AND role = 'orangtua'");
+        $this->db->bind('parent_id', $parentId);
+        $result = $this->db->single();
+        return $result ? $result['family_code'] : false;
     }
 
     // Helper: Cari ID Orang Tua berdasarkan Kode Keluarga

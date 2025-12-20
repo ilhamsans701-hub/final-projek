@@ -23,17 +23,20 @@ class Transaction_model {
         return $this->db->resultSet();
     }
 
-    public function getSummary($userId)
-    {
-        // Menghitung Total Pemasukan, Pengeluaran, dan Saldo
-        $this->db->query("SELECT 
-            SUM(CASE WHEN type = 'income' AND is_deleted = 0 THEN amount ELSE 0 END) as total_income,
-            SUM(CASE WHEN type = 'expense' AND is_deleted = 0 THEN amount ELSE 0 END) as total_expense
-            FROM " . $this->table . " WHERE user_id = :user_id");
-            
-        $this->db->bind('user_id', $userId);
-        return $this->db->single();
-    }
+    // Di Transaction_model.php, perbaiki method getSummary():
+public function getSummary($userId)
+{
+    // Query yang mengembalikan 0 jika NULL
+    $this->db->query("SELECT 
+        COALESCE(SUM(CASE WHEN type = 'income' AND is_deleted = 0 THEN amount ELSE 0 END), 0) as total_income,
+        COALESCE(SUM(CASE WHEN type = 'expense' AND is_deleted = 0 THEN amount ELSE 0 END), 0) as total_expense,
+        COALESCE(COUNT(CASE WHEN type = 'income' AND is_deleted = 0 THEN 1 END), 0) as income_count,
+        COALESCE(COUNT(CASE WHEN type = 'expense' AND is_deleted = 0 THEN 1 END), 0) as expense_count
+        FROM " . $this->table . " WHERE user_id = :user_id");
+        
+    $this->db->bind('user_id', $userId);
+    return $this->db->single();
+}
 
     public function getCategories()
     {
