@@ -718,12 +718,6 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link <?= ($data['current_page'] ?? '') == 'monitoring' ? 'active' : ''; ?>" href="#">
-                    <i class="fas fa-eye"></i>
-                    <span class="sidebar-text">Monitoring</span>
-                </a>
-            </li>
-            <li class="nav-item">
                 <a class="nav-link <?= ($data['current_page'] ?? '') == 'profile' ? 'active' : ''; ?>"
                     href="<?= BASEURL; ?>/profile">
                     <i class="fas fa-user"></i>

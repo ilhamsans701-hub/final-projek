@@ -193,4 +193,102 @@ class Student extends Controller {
         header('Location: ' . BASEURL . '/student');
         exit;
     }
+
+    public function add_progress($goalId)
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        // Cek login
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'anak') {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
+        
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            // Bersihkan format uang
+            $amount = str_replace('.', '', $_POST['amount']);
+            $amount = str_replace(',', '.', $amount); // Ubah koma jadi titik desimal
+            
+            // Panggil Model (Model sudah diperbaiki menggunakan rowCount)
+            if ($this->model('Goal_model')->updateGoalProgress($goalId, $amount)) {
+                
+                // Cek auto-complete
+                $goalModel = $this->model('Goal_model');
+                $goal = $goalModel->getGoalById($goalId);
+                
+                if ($goal && $goal['current_amount'] >= $goal['target_amount']) {
+                    $goalModel->completeGoal($goalId);
+                    Flasher::setFlash('berhasil', 'Selamat! Target tabungan tercapai! 🎉', 'success');
+                } else {
+                    Flasher::setFlash('berhasil', 'Progress berhasil ditambahkan', 'success');
+                }
+            } else {
+                // Jika rowCount 0 (misal nambah 0 rupiah), ini akan terpanggil
+                Flasher::setFlash('gagal', 'Gagal menambahkan progress (Data tidak berubah)', 'danger');
+            }
+        }
+        
+        header('Location: ' . BASEURL . '/student');
+        exit;
+    }
+
+    public function complete_goal($goalId)
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'anak') {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
+        
+        if ($this->model('Goal_model')->completeGoal($goalId)) {
+            Flasher::setFlash('berhasil', 'Target ditandai sebagai selesai', 'success');
+        } else {
+            // Jika target sudah selesai sebelumnya, rowCount akan 0, jadi masuk sini
+            Flasher::setFlash('info', 'Target sudah selesai atau tidak ada perubahan', 'info');
+        }
+        
+        header('Location: ' . BASEURL . '/student');
+        exit;
+    }
+
+    // Method helper untuk AJAX (opsional, untuk tanpa refresh halaman)
+    public function get_goals_data()
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Content-Type: application/json');
+            echo json_encode(['error' => 'Unauthorized']);
+            exit;
+        }
+        
+        $goalModel = $this->model('Goal_model');
+        $activeGoals = $goalModel->getActiveGoals($_SESSION['user_id'], 3);
+        
+        header('Content-Type: application/json');
+        echo json_encode($activeGoals);
+        exit;
+    }
+
+    // Tambahkan juga method untuk update statistik (opsional)
+    public function update_stats()
+    {
+        if(session_status() === PHP_SESSION_NONE) session_start();
+        
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASEURL . '/auth');
+            exit;
+        }
+        
+        $userId = $_SESSION['user_id'];
+        $transModel = $this->model('Transaction_model');
+        
+        $data['summary'] = $transModel->getSummary($userId);
+        $data['transactions'] = $transModel->getRecentTransactions($userId);
+        
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit;
+    }
 }

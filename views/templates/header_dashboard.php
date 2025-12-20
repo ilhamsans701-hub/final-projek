@@ -797,6 +797,15 @@
                     <span class="sidebar-text">Tambah Transaksi</span>
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link <?= ($data['current_page'] ?? '') == 'goal' ? 'active' : ''; ?>"
+                    href="<?= BASEURL; ?>/goal">
+                    <i class="fas fa-bullseye"></i>
+                    <span class="sidebar-text">Target Tabungan</span>
+                </a>
+            </li>
+
             <li class="nav-item">
                 <a class="nav-link <?= ($data['current_page'] ?? '') == 'subscription' ? 'active' : ''; ?>"
                     href="<?= BASEURL; ?>/subscription">
