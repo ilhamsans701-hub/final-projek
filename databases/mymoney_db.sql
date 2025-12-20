@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 20, 2025 at 05:47 AM
+-- Generation Time: Dec 20, 2025 at 07:18 AM
 -- Server version: 8.0.30
 -- PHP Version: 8.2.29
 
@@ -33,6 +33,21 @@ CREATE TABLE `categories` (
   `type` enum('expense','income') NOT NULL,
   `icon` varchar(50) DEFAULT 'fas fa-circle'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Dumping data for table `categories`
+--
+
+INSERT INTO `categories` (`id`, `name`, `type`, `icon`) VALUES
+(1, 'Uang Saku', 'income', 'fas fa-wallet'),
+(2, 'Gaji Part-time', 'income', 'fas fa-briefcase'),
+(3, 'Hadiah/Bonus', 'income', 'fas fa-gift'),
+(4, 'Makanan & Minuman', 'expense', 'fas fa-utensils'),
+(5, 'Transportasi', 'expense', 'fas fa-bus'),
+(6, 'Hiburan & Game', 'expense', 'fas fa-gamepad'),
+(7, 'Edukasi & Buku', 'expense', 'fas fa-book'),
+(8, 'Belanja Online', 'expense', 'fas fa-shopping-cart'),
+(9, 'Tagihan & Langganan', 'expense', 'fas fa-file-invoice');
 
 -- --------------------------------------------------------
 
@@ -174,7 +189,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `exchange_rates`
