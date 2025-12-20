@@ -1,98 +1,129 @@
-# MyMoney - Aplikasi Manajemen Keuangan Mahasiswa
+# MyMoney - Aplikasi Manajemen Keuangan Keluarga
 
-Aplikasi web sederhana untuk membantu mahasiswa pemula dalam mengelola keuangan pribadi mereka. Aplikasi ini mencakup fitur tracking anggaran, pengeluaran, dan konverter mata uang.
+## Fitur Utama
 
-## Fitur
+### **Untuk Orangtua**
+- **Dashboard Monitoring**: Pantau saldo, pemasukan, dan pengeluaran semua anak
+- **Detail Keuangan Anak**: Lihat transaksi, statistik, dan pola pengeluaran anak
+- **Laporan Visual**: Chart bulanan untuk analisis tren keuangan
+- **Export Data**: Download laporan transaksi dalam format CSV
 
-- 📊 **Dashboard Keuangan**: Lihat saldo tersedia, pengeluaran bulanan, dan anggaran
-- 💰 **Pengatur Anggaran**: Set anggaran bulanan dan tracking pengeluaran
-- 📝 **Pencatatan Pengeluaran**: Tambah dan hapus pengeluaran dengan deskripsi
-- 💱 **Konverter Mata Uang**: Konversi antar mata uang secara real-time
-- 💾 **Penyimpanan Lokal**: Data disimpan di browser menggunakan localStorage
+### **Untuk Anak (Mahasiswa)**
+- **Dashboard Pribadi**: Ringkasan keuangan pribadi dengan saldo dan anggaran
+- **Manajemen Transaksi**: Catat pemasukan dan pengeluaran dengan multi-mata uang
+- **Target Tabungan**: Buat dan track progress goals/target tabungan
+- **Tagihan Rutin**: Kelola subscription/langganan dengan reminder jatuh tempo
+- **Laporan**: Generate laporan keuangan bulanan (PDF/Excel)
 
-## Teknologi yang Digunakan
+## Arsitektur Sistem
 
-- **Frontend**: HTML5, CSS3, JavaScript (Vanilla)
-- **Backend**: Node.js, Express.js
-- **API**: ExchangeRate-API (gratis, tanpa API key)
-- **Styling**: CSS Custom dengan gradient dan responsive design
+### **Tech Stack**
+- **Backend**: PHP Native (MVC Pattern)
+- **Frontend**: HTML5, CSS3, JavaScript (jQuery, DataTables, Chart.js)
+- **Database**: MySQL
+- **Styling**: Bootstrap 5, Custom CSS dengan tema modern
+- **Third-party**: DataTables, Chart.js, Font Awesome
 
-## Instalasi
-
-1. Clone atau download repository ini
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. (Opsional) Konfigurasi environment variables di file `.env`:
-   ```
-   PORT=3000
-   NODE_ENV=development
-   ```
-
-4. Jalankan server:
-   ```bash
-   npm start
-   ```
-   atau untuk development dengan auto-reload:
-   ```bash
-   npm run dev
-   ```
-
-5. Buka browser dan akses: `http://localhost:3000`
-
-## Struktur Project
-
+### **Struktur Database**
 ```
-mymoney-student-pemula/
-├── index.html         # Halaman utama (dashboard sederhana)
-├── style.css          # Styling global
-├── script.js          # Logika JavaScript (kalkulator kurs, anggaran)
-├── server.js          # Backend sederhana (Node.js untuk API kurs)
-├── package.json       # Dependencies (express, axios)
-├── .env               # Kunci API kurs (jangan commit)
-├── README.md          # Dokumentasi singkat
-└── assets/            # Folder untuk gambar atau file statis
-    └── logo.png
+mymoney_db/
+├── users (id, username, email, password, role, family_code, parent_id)
+├── transactions (id, user_id, category_id, type, amount, currency_code, exchange_rate)
+├── categories (id, name, type, icon)
+├── goals (id, user_id, title, target_amount, current_amount, deadline, status)
+├── subscriptions (id, user_id, service_name, amount, billing_cycle, due_date)
+└── exchange_rates (id, currency_code, rate_to_idr)
+```
+
+## Instalasi & Setup
+
+### **1. Prerequisites**
+- PHP 7.4+ dengan PDO MySQL extension
+- MySQL 5.7+
+- Web server (Apache/Nginx)
+- Composer (opsional)
+
+### **2. Setup Database**
+```sql
+mysql -u username -p mymoney_db < database/mymoney_db.sql
+```
+
+### **3. Konfigurasi**
+```php
+// app/config/config.php
+define('BASEURL', 'http://localhost/mymoney');
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'mymoney_db');
+```
+
+### **4. Struktur Folder**
+```
+mymoney/
+├── app/
+│   ├── controllers/    # Controller (Auth, Student, Budget, Dashboard)
+│   ├── models/         # Model (User_model, Transaction_model, Budget_model)
+│   ├── core/           # Core system (App, Controller, Database)
+│   └── views/          # Views (HTML templates)
+├── public/
+│   ├── index.php       # Entry point
+│   └── assets/         # CSS, JS, images
+└── README.md           # Dokumentasi
 ```
 
 ## Cara Menggunakan
 
-### 1. Set Anggaran Bulanan
-- Masukkan jumlah anggaran bulanan Anda
-- Klik tombol "Set Anggaran"
+### **Registrasi & Login**
+1. **Orangtua** register terlebih dahulu → dapatkan `family_code`
+2. **Anak** register dengan memasukkan `family_code` orangtua
+3. Login sesuai role masing-masing
 
-### 2. Tambah Pengeluaran
-- Isi deskripsi pengeluaran (contoh: "Makan siang")
-- Masukkan jumlah pengeluaran
-- Klik "Tambah Pengeluaran"
+### **Fitur Orangtua**
+```
+1. Dashboard → Overview semua anak
+3. Detail Anak → Klik anak untuk lihat detail transaksi
+4. Export → Download laporan CSV
+```
 
-### 3. Konversi Mata Uang
-- Pilih mata uang asal dan tujuan
-- Masukkan jumlah yang ingin dikonversi
-- Klik "Konversi"
-- Gunakan tombol "Tukar" untuk menukar mata uang
+### **Fitur Anak**
+```
+1. Dashboard → Ringkasan keuangan pribadi
+2. Transaksi → Tambah/edit/hapus transaksi
+3. Goals → Buat target tabungan
+4. Subscription → Kelola tagihan rutin
+5. Report → Generate laporan bulanan
+```
 
-## Catatan Penting
+## Fitur Teknis
 
-- File `.env` tidak perlu di-commit ke repository (sudah ada di .gitignore)
-- Data pengeluaran dan anggaran disimpan di localStorage browser
-- Aplikasi menggunakan ExchangeRate-API yang gratis (tidak memerlukan API key)
-- Pastikan server berjalan untuk fitur konverter mata uang
+### **Multi-Mata Uang**
+- Support IDR, USD, EUR, SGD, dll
+- Auto-convert ke IDR untuk perhitungan
+- Rate dari API external (implementasi via Helper)
 
-## Dependencies
+### **Security Features**
+- Password hashing (bcrypt)
+- Session-based authentication
+- Input validation & sanitization
+- CSRF protection (basic)
+- SQL injection prevention (PDO prepared statements)
 
-- `express`: Web framework untuk Node.js
-- `axios`: HTTP client untuk API requests
-- `dotenv`: Load environment variables
-- `cors`: Enable CORS untuk API
+### **Responsive Design**
+- Mobile-first approach
+- Responsive tables dengan DataTables
+- Adaptive charts dengan Chart.js
+- Touch-friendly interface
 
-## License
+## Fitur Laporan & Analisis
 
-ISC
+### **Visualisasi Data**
+- **Chart Bulanan**: Income vs Expense trend
+- **Top Categories**: Kategori pengeluaran terbesar
+- **Budget Progress**: Progress anggaran vs realisasi
+- **Goal Tracking**: Progress target tabungan
 
-## Kontribusi
-
-Silakan buat issue atau pull request jika ingin berkontribusi pada project ini.
-
+### **Export Options**
+- **CSV Export**: Data mentah untuk analisis lanjutan
+- **Print View**: Format rapi untuk dicetak
+- **PDF Ready**: Browser print to PDF
