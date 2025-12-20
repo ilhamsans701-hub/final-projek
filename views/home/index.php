@@ -621,9 +621,8 @@
                     <a class="navbar-brand fw-bold fs-3" href="#home">
                         <i class="fas fa-wallet me-2"></i>MyMoney<span class="text-primary">.</span>
                     </a>
-                    <p class="mt-2">Web aplikasi keuangan mahasiswa dengan kurs otomatis dan notifikasi
-                        tagihan.</p>
-                    <small>Proyek Akhir Pengembangan Web - 2023</small>
+                    <p class="mt-2">Web aplikasi keuangan mahasiswa dengan kurs otomatis</p>
+                    <small>Proyek Akhir Pengembangan Web - 2025</small>
                 </div>
                 <div class="col-md-6 text-md-end">
                     <div class="d-flex justify-content-md-end gap-3 mb-2">
@@ -631,8 +630,8 @@
                         <a href="#" class="text-dark"><i class="fab fa-linkedin"></i></a>
                         <a href="#" class="text-dark"><i class="fas fa-envelope"></i></a>
                     </div>
-                    <small class="d-block">Dibuat dengan ❤️ untuk mahasiswa Indonesia</small>
-                    <small>© 2023 MyMoney - Semua hak dilindungi</small>
+                    <small class="d-block">Dibuat untuk mahasiswa Indonesia</small>
+                    <small>© 2025 MyMoney - Semua hak dilindungi</small>
                 </div>
             </div>
         </div>
