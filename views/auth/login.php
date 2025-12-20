@@ -48,12 +48,6 @@
                                 <span class="fw-semibold">Masuk ke Dashboard</span>
                             </button>
                         </div>
-
-                        <div class="text-center mb-3">
-                            <a href="#" class="text-primary text-decoration-none fs-6">
-                                <i class="fas fa-key me-1"></i> Lupa password?
-                            </a>
-                        </div>
                     </form>
 
                     <!-- Divider with responsive sizing -->
